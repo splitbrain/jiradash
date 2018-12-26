@@ -7,7 +7,7 @@ use splitbrain\JiraDash\Utilities\SqlHelper;
 use splitbrain\phpcli\CLI;
 use splitbrain\phpcli\Exception;
 
-class Update extends CLI
+class Update extends AbstractCLI
 {
     /** @var JiraAPI */
     protected $client;
@@ -40,12 +40,12 @@ class Update extends CLI
      */
     protected function main(\splitbrain\phpcli\Options $options)
     {
-        $conf = json_decode(file_get_contents(__DIR__ . '/../../conf.json'), true);
+        print_r($this->container->settings);
 
         $this->client = new \splitbrain\JiraDash\Service\JiraAPI(
-            $conf['jira_user'],
-            $conf['jira_pass'],
-            $conf['jira_base']
+            $this->container->settings['app']['api']['user'],
+            $this->container->settings['app']['api']['pass'],
+            $this->container->settings['app']['api']['base']
         );
 
         $args = $options->getArgs();

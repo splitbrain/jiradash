@@ -1,0 +1,11 @@
+settings:
+  displayErrorDetails: false
+  debug: false
+  app:
+    api:
+      user: you@example.com
+      pass: youraccesstoken
+      base: https://example.jira.com
+    fields:
+      epic_title: customfield_10601
+      epic_link: customfield_10600
