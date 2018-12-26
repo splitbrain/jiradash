@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "907e6fa92c64703feefbfe0311bafdf8",
+    "content-hash": "2edb7303e56c0d7e5a46154611da5e24",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -854,47 +854,6 @@
             "time": "2018-09-21T13:07:52+00:00"
         },
         {
-            "name": "tflori/orm",
-            "version": "v1.5.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tflori/orm.git",
-                "reference": "4d9743d106f81e6e7eefcda6184a9d84d5665a48"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tflori/orm/zipball/4d9743d106f81e6e7eefcda6184a9d84d5665a48",
-                "reference": "4d9743d106f81e6e7eefcda6184a9d84d5665a48",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "ext-pdo": "*",
-                "php": "^5.6 || ^7.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.1",
-                "phpunit/phpunit": "^5.6",
-                "squizlabs/php_codesniffer": "^2.7"
-            },
-            "suggest": {
-                "mockery/mockery": "^1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ORM\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "lightweight object relational mapper",
-            "time": "2018-10-25T11:27:44+00:00"
-        },
-        {
             "name": "twig/twig",
             "version": "v2.6.0",
             "source": {
@@ -969,12 +928,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "f370ac042dba652a93b6b1f330b33d86f3778b57"
+                "reference": "ac7afcafc8d63cd3d4ae4929291bb2fec9a4b688"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f370ac042dba652a93b6b1f330b33d86f3778b57",
-                "reference": "f370ac042dba652a93b6b1f330b33d86f3778b57",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ac7afcafc8d63cd3d4ae4929291bb2fec9a4b688",
+                "reference": "ac7afcafc8d63cd3d4ae4929291bb2fec9a4b688",
                 "shasum": ""
             },
             "conflict": {
@@ -1105,7 +1064,7 @@
                 "symfony/yaml": ">=2,<2.0.22|>=2.1,<2.1.7",
                 "tecnickcom/tcpdf": "<6.2.22",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
-                "thelia/thelia": ">=2.1,<2.1.2|>=2.1.0-beta1,<2.1.3",
+                "thelia/thelia": ">=2.1.0-beta1,<2.1.3|>=2.1,<2.1.2",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "titon/framework": ">=0,<9.9.99",
                 "truckersmp/phpwhois": "<=4.3.1",
@@ -1163,7 +1122,7 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2018-12-23T19:42:44+00:00"
+            "time": "2018-12-25T09:41:12+00:00"
         }
     ],
     "aliases": [],
