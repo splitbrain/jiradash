@@ -40,8 +40,6 @@ class Update extends AbstractCLI
      */
     protected function main(\splitbrain\phpcli\Options $options)
     {
-        print_r($this->container->settings);
-
         $this->client = new \splitbrain\JiraDash\Service\JiraAPI(
             $this->container->settings['app']['api']['user'],
             $this->container->settings['app']['api']['pass'],
@@ -84,7 +82,7 @@ class Update extends AbstractCLI
                 // epic issue
                 $insert = [
                     'id' => preg_replace('/\D+/', '', $issue['key']),
-                    'title' => $issue['fields']['customfield_10601'], #FIXME config
+                    'title' => $issue['fields'][$this->container->settings['app']['fields']['epic_title']],
                     'description' => $issue['fields']['summary'],
                     'created' => $issue['fields']['created'],
                 ];
@@ -94,7 +92,7 @@ class Update extends AbstractCLI
                 $insert = [
                     'id' => preg_replace('/\D+/', '', $issue['key']),
                     'sprint_id' => $sprint ? $sprint['id'] : null,
-                    'epic_id' => preg_replace('/\D+/', '', $issue['fields']['customfield_10600']), #FIXME config
+                    'epic_id' => preg_replace('/\D+/', '', $issue['fields'][$this->container->settings['app']['fields']['epic_title']]),
                     'title' => $issue['fields']['summary'],
                     'description' => $issue['fields']['description'],
                     'estimate' => (int)$issue['fields']['aggregatetimeoriginalestimate'],
