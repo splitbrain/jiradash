@@ -21,20 +21,21 @@ class ReportBuilder
         $this->db = $db;
     }
 
-    public static function fromConfig(SqlHelper $db, $conf)
+    public static function fromConfig(SqlHelper $db, $conf): ReportBuilder
     {
         $rb = new ReportBuilder($db);
 
         // handle show flags
         foreach ($conf as $key => $val) {
             $flag = 'show' . ucfirst($key);
-            if (is_callable([$rb, $flag]) && $val) $rb->$flag;
+            if (is_callable([$rb, $flag]) && $val) $rb->$flag();
         }
 
         // handle dates
         if (!empty($conf['start'])) $rb->setStart($conf['start']);
-        if (!empty($conf['end'])) $rb->setEnd($conf['start']);
+        if (!empty($conf['end'])) $rb->setEnd($conf['end']);
 
+        return $rb;
     }
 
     public function setStart($date)
@@ -60,7 +61,8 @@ class ReportBuilder
         $this->columns['s.title'] = 'sprint_title';
 
         $this->groups[] = 's.id';
-        $this->orders[20] = 's.title ASC';
+        $this->orders[20] = 's.created DESC';
+        $this->orders[21] = 's.title ASC';
     }
 
     public function showIssues()
@@ -75,7 +77,7 @@ class ReportBuilder
         $this->orders[30] = 'i.id DESC';
     }
 
-    public function showUserLogs()
+    public function showUserlogs()
     {
         $this->columns['w.user'] = 'worklog_user';
 
@@ -83,7 +85,7 @@ class ReportBuilder
         $this->orders[40] = 'w.user ASC';
     }
 
-    public function showWorkLogs()
+    public function showWorklogs()
     {
         $this->columns['w.user'] = 'worklog_user';
         $this->columns['w.created'] = 'worklog_created';

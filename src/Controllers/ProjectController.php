@@ -14,6 +14,14 @@ use splitbrain\JiraDash\Utilities\SqlHelper;
  */
 class ProjectController extends BaseController
 {
+    protected $default = [
+        'epics' => 0,
+        'sprints' => 1,
+        'issues' => 0,
+        'userlogs' => 1,
+        'worklogs' => 0,
+    ];
+
 
     /**
      * @param Request $request
@@ -30,21 +38,19 @@ class ProjectController extends BaseController
             throw new NotFoundException($request, $response);
         }
 
-        $error = '';
-        $result = [];
+        // parameters
         $sql = $request->getParam('sql');
+        $rc = $request->getParam('rc', $this->default);
 
-        if(!$sql) {
-            $rb = new ReportBuilder($db);
-            $rb->showEpics();
-            $rb->showIssues();
-            #$rb->showWorkLogs();
-            $rb->setStart('2018-11-01');
+        // use report builder when no custom SQL is given
+        if (!$sql) {
+            $rb = ReportBuilder::fromConfig($db, $rc);
             $sql = $rb->getSQL();
         }
 
-
-        if($sql) {
+        $error = '';
+        $result = [];
+        if ($sql) {
             try {
                 $result = $db->queryAll($sql);
             } catch (\PDOException $e) {
@@ -57,13 +63,15 @@ class ProjectController extends BaseController
             'title' => "Project $project",
             'project' => $project,
             'sql' => $sql,
+            'rc' => $rc,
             'result' => $result,
             'error' => $error,
         ]);
     }
 
 
-    protected function runSQL(SqlHelper $db, $sql) {
+    protected function runSQL(SqlHelper $db, $sql)
+    {
 
         $result = $db->queryAll($sql);
 

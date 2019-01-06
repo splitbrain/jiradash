@@ -1,25 +1,26 @@
 {% extends 'layout.twig' %}
+{% import 'form.twig' as form %}
 
 {% block content %}
 
-    <form action="{{ path_for('project', {'project': project}) }}" method="POST">
-        <textarea name="sql">{{ sql }}</textarea>
-        <input type="submit">
+    <form action="{{ path_for('project', {'project': project}) }}" method="POST" class="card">
+        <div class="card-content">
+            <div class="columns">
+                <div class="column">
+                    {{ form.checkbox('Epics', 'rc[epics]', '1', rc.epics) }}
+                    {{ form.checkbox('Sprints', 'rc[sprints]', '1', rc.sprints) }}
+                    {{ form.checkbox('Issues', 'rc[issues]', '1', rc.issues) }}
+                    {{ form.checkbox('Worker', 'rc[userlogs]', '1', rc.userlogs) }}
+                    {{ form.checkbox('Worklogs', 'rc[worklogs]', '1', rc.worklogs) }}
+                </div>
 
-
-        <fieldset>
-
-            <label>Detail
-                <select>
-                    <option>Sprint</option>
-                    <option>Epic</option>
-                    <option>Issue</option>
-                    <option>Worker</option>
-                    <option>Worklog</option>
-                </select>
-            </label>
-            
-        </fieldset>
+                <div class="column">
+                    {{ form.input('Start', 'rc[start]', rc.start, 'date') }}
+                    {{ form.input('End', 'rc[end]', rc.end, 'date') }}
+                </div>
+            </div>
+            <input type="submit" class="button is-primary">
+        </div>
 
 
     </form>
@@ -28,17 +29,39 @@
         <div>{{ error }}</div>
     {% endif %}
 
-
     {% if result %}
-        <table>
-            {% for row in result %}
-                <tr>
-                    {% for key,val in row %}
-                        <td>{{ val }}</td>
+        <div class="card">
+            <div class="card-content">
+                <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                    <tr>
+                        {% for key in result[0]|keys %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+
+                    {% for row in result %}
+                        <tr>
+                            {% for key,val in row %}
+                                <td>{{ val }}</td>
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
+                </table>
+            </div>
+        </div>
     {% endif %}
 
+    <div class="card">
+        <form action="{{ path_for('project', {'project': project}) }}" method="POST" class="card-content">
+            <h2 class="subtitle">Customize SQL</h2>
+            <div class="field">
+                <div class="control">
+                    <textarea class="textarea" name="sql">{{ sql }}</textarea>
+                </div>
+            </div>
+            <input type="submit" class="button is-primary">
+        </form>
+    </div>
 {% endblock %}

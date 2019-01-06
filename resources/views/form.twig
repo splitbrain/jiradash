@@ -1,0 +1,22 @@
+{% macro input(label, name, value, type) %}
+    <div class="field">
+        <label class="label" for="{{ name }}">{{ label }}</label>
+        <div class="control">
+            <input class="input"
+                   type="{{ type|default('text') }}"
+                   name="{{ name }}"
+                   value="{{ value }}"
+                   id="{{ name }}"/>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro checkbox(label, name, value, set) %}
+    <div class="field">
+        <label class="checkbox">
+            <input type="checkbox" name="{{ name }}" value="{{ value }}"
+                   {% if value == set %}checked="checked"{% endif %}>
+            {{ label }}
+        </label>
+    </div>
+{% endmacro %}
