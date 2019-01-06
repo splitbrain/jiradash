@@ -53,6 +53,7 @@ class Update extends AbstractCLI
     /**
      * @param string $project
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     protected function importProject($project)
     {
@@ -61,7 +62,7 @@ class Update extends AbstractCLI
         $issues = $this->client->queryJQL('/rest/api/latest/search/', "project = $project");
         #print_r($issues);
 
-        $db = $this->openDB($project);
+        $db = $this->container->db->accessDB($project, true);
         $db->begin();
         foreach ($issues['issues'] as $issue) {
             $this->info($issue['key']);

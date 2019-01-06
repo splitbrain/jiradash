@@ -1,0 +1,44 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+
+    <form action="{{ path_for('project', {'project': project}) }}" method="POST">
+        <textarea name="sql">{{ sql }}</textarea>
+        <input type="submit">
+
+
+        <fieldset>
+
+            <label>Detail
+                <select>
+                    <option>Sprint</option>
+                    <option>Epic</option>
+                    <option>Issue</option>
+                    <option>Worker</option>
+                    <option>Worklog</option>
+                </select>
+            </label>
+            
+        </fieldset>
+
+
+    </form>
+
+    {% if error %}
+        <div>{{ error }}</div>
+    {% endif %}
+
+
+    {% if result %}
+        <table>
+            {% for row in result %}
+                <tr>
+                    {% for key,val in row %}
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+{% endblock %}

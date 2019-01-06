@@ -4,6 +4,7 @@ namespace splitbrain\JiraDash;
 
 
 use splitbrain\JiraDash\Controllers\HomeController;
+use splitbrain\JiraDash\Controllers\ProjectController;
 
 /**
  * PMI Dashboard App
@@ -66,6 +67,7 @@ class App
     protected function initRoutes()
     {
         $this->app->get('/', HomeController::class);
+        $this->app->any('/p/{project}', ProjectController::class)->setName('project');
     }
 
     /**

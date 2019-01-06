@@ -2,15 +2,16 @@
 
 namespace splitbrain\JiraDash;
 
-use CosmoCode\Matrix\Controllers\ErrorHandler;
-use ORM\DbConfig;
 use Slim\Views\Twig;
 use splitbrain\JiraDash\Service\ConfigurationManager;
+use splitbrain\JiraDash\Service\DataBaseManager;
 
 /**
  * Class Container
  *
  * @property Twig view The Twig view manager
+ * @property ConfigurationManager config Configuration Manager
+ * @property DataBaseManager db
  */
 class Container extends \Slim\Container
 {
@@ -59,6 +60,10 @@ class Container extends \Slim\Container
                 $c->request->getUri()
             ));
             return $view;
+        };
+
+        $this['db'] = function ($c) {
+            return new DataBaseManager($c);
         };
 
         // custom error handling

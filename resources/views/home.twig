@@ -1,8 +1,7 @@
-<html lang="en">
-<head>
-    <title>JiraDash</title>
-</head>
-<body>
-<h1>hello world</h1>
-</body>
-</html>
+{% extends 'layout.twig' %}
+
+{% block content %}
+    {% for project in projects %}
+        <li><a href="{{ path_for('project', {'project':project}) }}">{{ project }}</a></li>
+    {% endfor %}
+{% endblock %}

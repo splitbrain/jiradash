@@ -24,4 +24,9 @@ class ConfigurationManager
         return $this->conf;
     }
 
+    public function getDataDir()
+    {
+        return __DIR__ . '/../../data/';
+    }
+
 }
