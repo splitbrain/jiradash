@@ -21,6 +21,16 @@ class SqlHelper
     }
 
     /**
+     * Access the PDO object
+     *
+     * @return \PDO
+     */
+    public function pdo()
+    {
+        return $this->pdo;
+    }
+
+    /**
      * @see PDO::beginTransaction()
      * @return bool
      */

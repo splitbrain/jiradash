@@ -35,9 +35,11 @@ class ProjectController extends BaseController
         $sql = $request->getParam('sql');
 
         if(!$sql) {
-            $rb = new ReportBuilder();
+            $rb = new ReportBuilder($db);
             $rb->showEpics();
             $rb->showIssues();
+            #$rb->showWorkLogs();
+            $rb->setStart('2018-11-01');
             $sql = $rb->getSQL();
         }
 

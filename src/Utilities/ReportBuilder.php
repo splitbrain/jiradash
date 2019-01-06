@@ -2,52 +2,102 @@
 
 namespace splitbrain\JiraDash\Utilities;
 
-class ReportBuilder {
+class ReportBuilder
+{
+    /** @var SqlHelper */
+    protected $db;
 
+    /** @var array column => alias */
     protected $columns = [];
+    /** @var array column[] */
     protected $groups = [];
+    /** @var array prio => column */
+    protected $orders = [];
+    /** @var array */
+    protected $wheres = [];
 
+    public function __construct(SqlHelper $db)
+    {
+        $this->db = $db;
+    }
 
-    public function showIssues() {
+    public static function fromConfig(SqlHelper $db, $conf)
+    {
+        $rb = new ReportBuilder($db);
+
+        // handle show flags
+        foreach ($conf as $key => $val) {
+            $flag = 'show' . ucfirst($key);
+            if (is_callable([$rb, $flag]) && $val) $rb->$flag;
+        }
+
+        // handle dates
+        if (!empty($conf['start'])) $rb->setStart($conf['start']);
+        if (!empty($conf['end'])) $rb->setEnd($conf['start']);
+
+    }
+
+    public function setStart($date)
+    {
+        $this->wheres['start'] = "DATE(w.created) >= DATE(" . $this->db->pdo()->quote($date) . ')';
+    }
+
+    public function setEnd($date)
+    {
+        $this->wheres['end'] = "DATE(w.created) <= DATE(" . $this->db->pdo()->quote($date) . ')';
+    }
+
+    public function showEpics()
+    {
+        $this->columns['e.title'] = 'epic_title';
+
+        $this->groups[] = 'e.id';
+        $this->orders[10] = 'e.title ASC';
+    }
+
+    public function showSprints()
+    {
+        $this->columns['s.title'] = 'sprint_title';
+
+        $this->groups[] = 's.id';
+        $this->orders[20] = 's.title ASC';
+    }
+
+    public function showIssues()
+    {
         $this->columns['i.id'] = 'issue_id';
+        $this->columns['i.type'] = 'issue_type';
         $this->columns['i.title'] = 'issue_title';
         $this->columns['s.title'] = 'sprint_title';
         $this->columns['e.title'] = 'epic_title';
 
         $this->groups[] = 'i.id';
+        $this->orders[30] = 'i.id DESC';
     }
 
-    public function showSprints() {
-        $this->columns['s.title'] = 'sprint_title';
-
-        $this->groups[] = 's.id';
-    }
-
-    public function showEpics() {
-        $this->columns['e.title'] = 'epic_title';
-
-        $this->groups[] = 'e.id';
-    }
-
-    public function showUserLogs() {
+    public function showUserLogs()
+    {
         $this->columns['w.user'] = 'worklog_user';
 
         $this->groups[] = 'w.user';
+        $this->orders[40] = 'w.user ASC';
     }
 
-    public function showWorkLogs() {
+    public function showWorkLogs()
+    {
         $this->columns['w.user'] = 'worklog_user';
         $this->columns['w.created'] = 'worklog_created';
 
         $this->groups[] = 'w.id';
+        $this->orders[50] = 'w.created DESC';
     }
 
     public function getSQL()
     {
         // select columns
-        $sql = 'SELECT ';
-        foreach ($this->columns as $c => $a){
-            $sql .= "$c AS $a,";
+        $sql = "SELECT \n";
+        foreach ($this->columns as $c => $a) {
+            $sql .= "$c AS $a,\n";
         }
         $sql .= "SUM(w.logged) AS worklog_logged\n";
 
@@ -57,10 +107,18 @@ class ReportBuilder {
         $sql .= "LEFT JOIN sprint AS s ON i.sprint_id = s.id\n";
         $sql .= "LEFT JOIN worklog w on i.id = w.issue_id\n";
 
-        // FIXME add filters here
+        // wheres
+        if ($this->wheres) {
+            $sql .= "WHERE (\n";
+            $sql .= implode("\nAND ", $this->wheres);
+            $sql .= "\n)\n";
+        }
 
         // group by
-        $sql .= 'GROUP BY '.implode(', ', $this->groups);
+        $sql .= 'GROUP BY ' . implode(', ', $this->groups) . "\n";
+
+        // order by
+        $sql .= 'ORDER BY ' . implode(', ', $this->orders) . "\n";
 
         return $sql;
     }

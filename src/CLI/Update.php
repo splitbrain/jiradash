@@ -4,7 +4,6 @@ namespace splitbrain\JiraDash\CLI;
 
 use splitbrain\JiraDash\Service\JiraAPI;
 use splitbrain\JiraDash\Utilities\SqlHelper;
-use splitbrain\phpcli\CLI;
 use splitbrain\phpcli\Exception;
 
 class Update extends AbstractCLI
@@ -74,7 +73,7 @@ class Update extends AbstractCLI
                     'id' => $sprint['id'],
                     'title' => $sprint['name'],
                     'description' => $sprint['goal'],
-                    'created' => $sprint['startDate']
+                    'created' => $this->dateClean($sprint['startDate'])
                 ];
                 $db->insertRecord('sprint', $insert);
             }
@@ -85,7 +84,7 @@ class Update extends AbstractCLI
                     'id' => preg_replace('/\D+/', '', $issue['key']),
                     'title' => $issue['fields'][$this->container->settings['app']['fields']['epic_title']],
                     'description' => $issue['fields']['summary'],
-                    'created' => $issue['fields']['created'],
+                    'created' => $this->dateClean($issue['fields']['created']),
                 ];
                 $db->insertRecord('epic', $insert);
             } else {
@@ -93,7 +92,7 @@ class Update extends AbstractCLI
                 $insert = [
                     'id' => preg_replace('/\D+/', '', $issue['key']),
                     'sprint_id' => $sprint ? $sprint['id'] : null,
-                    'epic_id' => preg_replace('/\D+/', '', $issue['fields'][$this->container->settings['app']['fields']['epic_title']]),
+                    'epic_id' => preg_replace('/\D+/', '', $issue['fields'][$this->container->settings['app']['fields']['epic_link']]),
                     'title' => $issue['fields']['summary'],
                     'description' => $issue['fields']['description'],
                     'estimate' => (int)$issue['fields']['aggregatetimeoriginalestimate'],
@@ -101,8 +100,8 @@ class Update extends AbstractCLI
                     'type' => $issue['fields']['issuetype']['name'],
                     'user' => $issue['fields']['assignee']['displayName'],
                     'status' => $issue['fields']['status']['name'],
-                    'created' => $issue['fields']['created'],
-                    'updated' => $issue['fields']['updated'],
+                    'created' => $this->dateClean($issue['fields']['created']),
+                    'updated' => $this->dateClean($issue['fields']['updated']),
                     'prio' => $issue['fields']['priority']['name'],
                 ];
                 $db->insertRecord('issue', $insert);
@@ -113,13 +112,21 @@ class Update extends AbstractCLI
         $db->commit();
     }
 
-    protected function importWorklogs(SqlHelper $db, $key) {
-        $logs = $this->client->query('/rest/api/2/issue/'.$key.'/worklog',[]);
-        foreach($logs['worklogs'] as $log) {
+    protected function dateClean($string)
+    {
+        $ts = strtotime($string);
+        if (!$ts) return '';
+        return strftime('%Y-%m-%d %H:%M:%S', $ts);
+    }
+
+    protected function importWorklogs(SqlHelper $db, $key)
+    {
+        $logs = $this->client->query('/rest/api/2/issue/' . $key . '/worklog', []);
+        foreach ($logs['worklogs'] as $log) {
             $insert = [
                 'id' => $log['id'],
                 'issue_id' => preg_replace('/\D+/', '', $key),
-                'created' => $log['started'],
+                'created' => $this->dateClean($log['started']),
                 'logged' => $log['timeSpentSeconds'],
                 'user' => $log['author']['displayName'],
                 'description' => isset($log['comment']) ? $log['comment'] : '',
