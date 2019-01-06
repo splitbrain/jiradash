@@ -17,6 +17,8 @@
                 <div class="column">
                     {{ form.input('Start', 'rc[start]', rc.start, 'date') }}
                     {{ form.input('End', 'rc[end]', rc.end, 'date') }}
+
+                    {{ form.dropdown('Renderer', 'rc[renderer]', {'FlatHTML':'flat', 'TreeHTML':'nested'}, rc.renderer) }}
                 </div>
             </div>
             <input type="submit" class="button is-primary">

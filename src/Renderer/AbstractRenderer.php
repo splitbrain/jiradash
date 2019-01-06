@@ -9,6 +9,7 @@ abstract class AbstractRenderer
 {
     protected $container;
     protected $project;
+    protected $rc;
 
     protected $columnNames = [
         'epic_title' => 'Epic',
@@ -21,9 +22,10 @@ abstract class AbstractRenderer
         'worklog_logged' => 'Logged',
     ];
 
-    public function __construct(Container $container, $project)
+    public function __construct(Container $container, $rc, $project)
     {
         $this->container = $container;
+        $this->rc = $rc;
         $this->project = $project;
     }
 

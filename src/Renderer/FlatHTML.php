@@ -21,9 +21,10 @@ class FlatHTML extends AbstractRenderer
     }
 
 
-    protected function renderHeaders($headers)
+    protected function renderHeaders($headers, $prefix = 0)
     {
         $doc = '<thead><tr>';
+        $doc .= implode('', array_fill(0, $prefix, '<th>&nbsp;</th>'));
         foreach ($headers as $h) {
             $doc .= '<th>' . htmlspecialchars($this->formatHeader($h)) . '</th>';
         }
@@ -32,9 +33,10 @@ class FlatHTML extends AbstractRenderer
         return $doc;
     }
 
-    protected function renderRow($row)
+    protected function renderRow($row, $prefix = 0)
     {
         $doc = '<tr>';
+        $doc .= implode('', array_fill(0, $prefix, '<td>&nbsp;</td>'));
         foreach ($row as $key => $val) {
             $doc .= '<td>';
             $doc .= $this->formatValue($key, $val);

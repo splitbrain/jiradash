@@ -5,6 +5,7 @@ namespace splitbrain\JiraDash\Controllers;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use splitbrain\JiraDash\Renderer\AbstractRenderer;
 use splitbrain\JiraDash\Utilities\ReportBuilder;
 use splitbrain\JiraDash\Utilities\SqlHelper;
 
@@ -20,6 +21,7 @@ class ProjectController extends BaseController
         'issues' => 0,
         'userlogs' => 1,
         'worklogs' => 0,
+        'renderer' => 'TreeHTML',
     ];
 
 
@@ -58,13 +60,16 @@ class ProjectController extends BaseController
             }
         }
 
+        $rclass = '\\splitbrain\\JiraDash\\Renderer\\' . $rc['renderer'];
+        /** @var AbstractRenderer $r */
+        $r = new $rclass($this->container, $rc, $project);
 
         return $this->view->render($response, 'project.twig', [
             'title' => "Project $project",
             'project' => $project,
             'sql' => $sql,
             'rc' => $rc,
-            'result' => $result,
+            'result' => $r->render($result),
             'error' => $error,
         ]);
     }

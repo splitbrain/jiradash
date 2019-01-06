@@ -14,7 +14,9 @@ class ReportBuilder
     /** @var array prio => column */
     protected $orders = [];
     /** @var array */
-    protected $wheres = [];
+    protected $wheres = [
+#        'nozero' => 'w.logged > 0'  // make this an option
+    ];
 
     public function __construct(SqlHelper $db)
     {
