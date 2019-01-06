@@ -32,23 +32,7 @@
     {% if result %}
         <div class="card">
             <div class="card-content">
-                <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                    <tr>
-                        {% for key in result[0]|keys %}
-                            <th>{{ key }}</th>
-                        {% endfor %}
-                    </tr>
-                    </thead>
-
-                    {% for row in result %}
-                        <tr>
-                            {% for key,val in row %}
-                                <td>{{ val }}</td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </table>
+                {{ result|raw }}
             </div>
         </div>
     {% endif %}
