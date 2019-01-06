@@ -50,10 +50,24 @@ abstract class AbstractRenderer
         if (is_callable([$this, $formatter])) {
             return $this->$formatter($value, $name);
         }
+
+        $post = explode('_', $name);
+        $post = ucfirst(array_pop($post));
+        $formatter = "format$post";
+        if (is_callable([$this, $formatter])) {
+            return $this->$formatter($value, $name);
+        }
+
         return $value;
     }
 
-    protected function formatWorklogLogged($value) {
-        return round($value/(60*60*5),2).'d';
+    protected function formatLogged($value)
+    {
+        return round($value / (60 * 60 * 5), 2) . 'd';
+    }
+
+    protected function formatEstimate($value)
+    {
+        return $this->formatLogged($value);
     }
 }

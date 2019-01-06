@@ -49,12 +49,8 @@ class FlatHTML extends AbstractRenderer
 
     protected function formatValue($name, $value)
     {
-        $camel = str_replace('_', '', ucwords($name, '_'));
-        $formatter = "format$camel";
-        if (is_callable([$this, $formatter])) {
-            return $this->$formatter($value, $name);
-        }
-        return htmlspecialchars($value);
+        if($name === 'issue_id') return $this->formatIssueId($value);
+        return htmlspecialchars(parent::formatValue($name, $value));
     }
 
     protected function formatIssueId($val)

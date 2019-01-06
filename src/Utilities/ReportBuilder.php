@@ -74,6 +74,7 @@ class ReportBuilder
         $this->columns['i.title'] = 'issue_title';
         $this->columns['s.title'] = 'sprint_title';
         $this->columns['e.title'] = 'epic_title';
+        $this->columns['i.estimate'] = 'issue_estimate';
 
         $this->groups[] = 'i.id';
         $this->orders[30] = 'i.id DESC';

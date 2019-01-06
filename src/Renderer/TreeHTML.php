@@ -131,7 +131,7 @@ class TreeHTML extends FlatHTML
                 $doc .= $item['name'];
                 $doc .= '</th>';
                 $doc .= '<th>';
-                $doc .= 'Σ'.$this->formatWorklogLogged($item['log']);
+                $doc .= 'Σ'.$this->formatValue('logged', $item['log']);
                 $doc .= '</th>';
                 $doc .= '</tr>';
 
