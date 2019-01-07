@@ -135,17 +135,19 @@ class TreeHTML extends FlatHTML
                 $doc .= implode('', array_fill(0, $level, '<th>&nbsp;</th>'));
                 $doc .= '<th colspan="' . $span . '" class="has-background-white-ter">';
                 $doc .= $item['name'];
-                if(!empty($item['estimate'])) {
-                    if($item['estimate'] >= $item['log']) {
+                if (!empty($item['estimate'])) {
+                    if ($item['estimate'] >= $item['log']) {
                         $color = 'success';
                     } else {
                         $color = 'danger';
                     }
-                    $doc .= ' <small class="has-text-'.$color.'">Estimate: '.$this->formatValue('estimate', $item['estimate']).'</small>';
+                    $doc .= '<small class="is-pulled-right has-text-' . $color . '">';
+                    $doc .= 'Estimate: ' . $this->formatValue('estimate', $item['estimate']);
+                    $doc .= '</small>';
                 }
                 $doc .= '</th>';
                 $doc .= '<th class="has-background-white-ter">';
-                $doc .= 'Σ'.$this->formatValue('logged', $item['log']);
+                $doc .= 'Σ' . $this->formatValue('logged', $item['log']);
                 $doc .= '</th>';
                 $doc .= '</tr>';
 

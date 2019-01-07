@@ -35,8 +35,14 @@ class DataBaseManager
 
         $dbdir = $this->container->config->getDataDir();
         $dbfile = $dbdir . $project . '.sqlite';
-        if (!file_exists($dbfile)) {
-            throw new \Exception('no database file and migrations not in place FIXME');
+        if (file_exists($dbfile)) {
+            if($create) {
+                unlink($dbfile);
+            }
+        } else {
+            if(!$create) {
+                throw new \Exception('no database file');
+            }
         }
 
         $pdo = new \PDO('sqlite:' . $dbfile);
@@ -45,8 +51,17 @@ class DataBaseManager
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         $this->connections[$project] = new SqlHelper($pdo);
+        if($create) {
+            $this->create($this->connections[$project]);
+        }
+
         return $this->connections[$project];
     }
 
-
+    protected function create(SqlHelper $db) {
+        $sql = file_get_contents($this->container->config->getResourcesDir().'db.sql');
+        $db->begin();
+        $db->pdo()->exec($sql);
+        $db->commit();
+    }
 }

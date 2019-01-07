@@ -47,7 +47,8 @@ class FlatHTML extends AbstractRenderer
             $doc .= '</td>';
         }
         $doc .= '</tr>';
-
+        $this->currentRow = null;
+        
         return $doc;
     }
 

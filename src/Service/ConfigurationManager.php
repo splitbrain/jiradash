@@ -29,4 +29,9 @@ class ConfigurationManager
         return __DIR__ . '/../../data/';
     }
 
+    public function getResourcesDir()
+    {
+        return __DIR__ . '/../../resources/';
+    }
+
 }
