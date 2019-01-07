@@ -3,13 +3,18 @@
 namespace splitbrain\JiraDash\CLI;
 
 use splitbrain\JiraDash\Service\JiraAPI;
+use splitbrain\JiraDash\Service\TempoAPI;
 use splitbrain\JiraDash\Utilities\SqlHelper;
 use splitbrain\phpcli\Exception;
 
 class Update extends AbstractCLI
 {
     /** @var JiraAPI */
-    protected $client;
+    protected $jiraAPI;
+    /** @var TempoAPI */
+    protected $tempoAPI;
+    /** @var SqlHelper */
+    protected $db;
 
     /**
      * Register options and arguments on the given $options object
@@ -36,17 +41,28 @@ class Update extends AbstractCLI
      *
      * @throws \splitbrain\phpcli\Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     protected function main(\splitbrain\phpcli\Options $options)
     {
-        $this->client = new \splitbrain\JiraDash\Service\JiraAPI(
+        $this->jiraAPI = new \splitbrain\JiraDash\Service\JiraAPI(
             $this->container->settings['app']['api']['user'],
             $this->container->settings['app']['api']['pass'],
             $this->container->settings['app']['api']['base']
         );
 
+        $this->tempoAPI = new TempoAPI(
+            $this->container->settings['app']['tempo']['token']
+        );
+
         $args = $options->getArgs();
-        $this->importProject($args[0]);
+        $project = $args[0];
+
+
+        $this->db = $this->container->db->accessDB($project, true);
+
+        $this->importProject($project);
+        $this->importTimeSheetLogs($project);
     }
 
     /**
@@ -56,13 +72,11 @@ class Update extends AbstractCLI
      */
     protected function importProject($project)
     {
-
-
-        $issues = $this->client->queryJQL('/rest/api/latest/search/', "project = $project");
+        $this->info('Importing Tickets...');
+        $issues = $this->jiraAPI->queryJQL('/rest/api/latest/search/', "project = $project");
         #print_r($issues);
 
-        $db = $this->container->db->accessDB($project, true);
-        $db->begin();
+        $this->db->begin();
         foreach ($issues['issues'] as $issue) {
             $this->info($issue['key']);
 
@@ -75,7 +89,7 @@ class Update extends AbstractCLI
                     'description' => $sprint['goal'],
                     'created' => $this->dateClean($sprint['startDate'])
                 ];
-                $db->insertRecord('sprint', $insert);
+                $this->db->insertRecord('sprint', $insert);
             }
 
             if ($issue['fields']['issuetype']['name'] === 'Epic') {
@@ -86,7 +100,7 @@ class Update extends AbstractCLI
                     'description' => $issue['fields']['summary'],
                     'created' => $this->dateClean($issue['fields']['created']),
                 ];
-                $db->insertRecord('epic', $insert);
+                $this->db->insertRecord('epic', $insert);
             } else {
                 // normal issue
                 $insert = [
@@ -104,14 +118,20 @@ class Update extends AbstractCLI
                     'updated' => $this->dateClean($issue['fields']['updated']),
                     'prio' => $issue['fields']['priority']['name'],
                 ];
-                $db->insertRecord('issue', $insert);
+                $this->db->insertRecord('issue', $insert);
 
-                $this->importWorklogs($db, $issue['key']);
+                #$this->importWorklogs($issue['key']);
             }
         }
-        $db->commit();
+        $this->db->commit();
     }
 
+    /**
+     * Cleans a Jira data into a SQLite compatible datetime
+     *
+     * @param $string
+     * @return string
+     */
     protected function dateClean($string)
     {
         $ts = strtotime($string);
@@ -119,9 +139,51 @@ class Update extends AbstractCLI
         return strftime('%Y-%m-%d %H:%M:%S', $ts);
     }
 
-    protected function importWorklogs(SqlHelper $db, $key)
+    /**
+     * Import worklogs
+     *
+     * @param string $project
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    protected function importTimeSheetLogs($project)
     {
-        $logs = $this->client->query('/rest/api/2/issue/' . $key . '/worklog', []);
+        $this->info('Importing worklogs...');
+        $got = 0;
+        $logs = $this->tempoAPI->query("/2/worklogs/project/$project", []);
+        $this->db->begin();
+        foreach ($logs['results'] as $log) {
+            $insert = [
+                'id' => $log['jiraWorklogId'],
+                'issue_id' => preg_replace('/\D+/', '', $log['issue']['key']),
+                'created' => $this->dateClean($log['startDate']),
+                'logged' => $log['timeSpentSeconds'],
+                'user' => $log['author']['displayName'],
+                'description' => $log['description'],
+            ];
+            try {
+                $this->db->insertRecord('worklog', $insert);
+                $got++;
+            } catch (\Exception $e) {
+                $this->debug(print_r($insert, true));
+                $this->error('failed to insert worklog for issue {issue}', ['issue' => $insert['id']]);
+                continue;
+            }
+        }
+        $this->db->commit();
+        if ($got > 0) $this->success('Imported {count} logs', ['count' => $got]);
+        #print_r($logs);
+    }
+
+    /**
+     * Imports worklogs from Jira
+     *
+     * @deprecated we use the tempo API instead
+     * @param string $key issue ID
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    protected function importWorklogs($key)
+    {
+        $logs = $this->jiraAPI->query('/rest/api/2/issue/' . $key . '/worklog', []);
         foreach ($logs['worklogs'] as $log) {
             $insert = [
                 'id' => $log['id'],
@@ -131,7 +193,7 @@ class Update extends AbstractCLI
                 'user' => $log['author']['displayName'],
                 'description' => isset($log['comment']) ? $log['comment'] : '',
             ];
-            $db->insertRecord('worklog', $insert);
+            $this->db->insertRecord('worklog', $insert);
         }
     }
 

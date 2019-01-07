@@ -6,6 +6,8 @@ settings:
       user: you@example.com
       pass: youraccesstoken
       base: https://example.jira.com
+    tempo:
+      token: fixme
     fields:
       epic_title: customfield_10601
       epic_link: customfield_10600
