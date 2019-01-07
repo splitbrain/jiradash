@@ -63,6 +63,7 @@ class Update extends AbstractCLI
 
         $this->importProject($project);
         $this->importTimeSheetLogs($project);
+        $this->aggregateEstimates();
     }
 
     /**
@@ -197,20 +198,28 @@ class Update extends AbstractCLI
         }
     }
 
-    protected function openDB($project)
+    /**
+     * Copy estimate aggregations into epics and sprints
+     */
+    protected function aggregateEstimates()
     {
-        $dbdir = __DIR__ . '/../../data/';
-        $dbfile = $dbdir . $project . '.sqlite';
-        if (!file_exists($dbfile)) {
-            throw new Exception('no database file and migrations not in place FIXME');
-        }
+        $sql = 'WITH a AS(
+                    SELECT sprint_id, SUM(i.estimate) as estimate
+                      FROM issue AS i
+                  GROUP BY sprint_id
+                )
+                UPDATE sprint
+                    SET estimate = (SELECT estimate FROM a WHERE a.sprint_id = sprint.id)';
+        $this->db->exec($sql);
 
-        $pdo = new \PDO('sqlite:' . $dbfile);
-        $pdo->exec('PRAGMA foreign_keys = ON');
-        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        return new SqlHelper($pdo);
+        $sql = 'WITH a AS(
+                    SELECT epic_id, SUM(i.estimate) as estimate
+                      FROM issue AS i
+                  GROUP BY epic_id
+                )
+                UPDATE epic
+                    SET estimate = (SELECT estimate FROM a WHERE a.epic_id = epic.id)';
+        $this->db->exec($sql);
     }
 
     /**

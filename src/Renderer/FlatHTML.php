@@ -4,7 +4,8 @@ namespace splitbrain\JiraDash\Renderer;
 
 class FlatHTML extends AbstractRenderer
 {
-
+    // reference to the current row for value rendering
+    protected $currentRow;
 
     public function render($data)
     {
@@ -26,7 +27,9 @@ class FlatHTML extends AbstractRenderer
         $doc = '<thead><tr>';
         $doc .= implode('', array_fill(0, $prefix, '<th>&nbsp;</th>'));
         foreach ($headers as $h) {
-            $doc .= '<th>' . htmlspecialchars($this->formatHeader($h)) . '</th>';
+            $doc .= '<th title="' . htmlspecialchars($h) . '">';
+            $doc .= htmlspecialchars($this->formatHeader($h));
+            $doc .= '</th>';
         }
         $doc .= '</tr></thead>';
 
@@ -35,6 +38,7 @@ class FlatHTML extends AbstractRenderer
 
     protected function renderRow($row, $prefix = 0)
     {
+        $this->currentRow = $row;
         $doc = '<tr>';
         $doc .= implode('', array_fill(0, $prefix, '<td>&nbsp;</td>'));
         foreach ($row as $key => $val) {
@@ -49,7 +53,8 @@ class FlatHTML extends AbstractRenderer
 
     protected function formatValue($name, $value)
     {
-        if($name === 'issue_id') return $this->formatIssueId($value);
+        if ($name === 'issue_id') return $this->formatIssueId($value);
+        if (substr($name, -8) === 'estimate') return $this->formatEstimate($value);
         return htmlspecialchars(parent::formatValue($name, $value));
     }
 
@@ -60,4 +65,23 @@ class FlatHTML extends AbstractRenderer
 
         return '<a href="' . $url . '" target="_blank">' . $this->project . '-' . $val . '</a>';
     }
+
+    protected function formatEstimate($value)
+    {
+        $formatted = parent::formatEstimate($value);
+
+        if (!empty($this->currentRow['worklog_logged']) && !empty($value)) {
+            if ($value >= $this->currentRow['worklog_logged']) {
+                $class = 'has-text-success';
+            } else {
+                $class = 'has-text-danger';
+            }
+        } else {
+            $class = '';
+        }
+
+        return "<span class=\"$class\">$formatted</span>";
+    }
+
+
 }

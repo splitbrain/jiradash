@@ -63,7 +63,11 @@ abstract class AbstractRenderer
 
     protected function formatLogged($value)
     {
-        return round($value / (60 * 60 * 5), 2) . 'd';
+        if(empty($this->rc['hours'])) {
+            return round($value / (60 * 60 * 8), 2) . 'd';
+        } else {
+            return round($value / (60 * 60), 2) . 'h';
+        }
     }
 
     protected function formatEstimate($value)

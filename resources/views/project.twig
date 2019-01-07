@@ -15,10 +15,11 @@
                 </div>
 
                 <div class="column">
-                    {{ form.input('Start', 'rc[start]', rc.start, 'date') }}
-                    {{ form.input('End', 'rc[end]', rc.end, 'date') }}
+                    {{ form.input('Worklog Start', 'rc[start]', rc.start, 'date') }}
+                    {{ form.input('Worklog End', 'rc[end]', rc.end, 'date') }}
 
                     {{ form.dropdown('Renderer', 'rc[renderer]', {'FlatHTML':'flat', 'TreeHTML':'nested'}, rc.renderer) }}
+                    {{ form.checkbox('Show Hours', 'rc[hours]', '1', rc.hours) }}
                 </div>
             </div>
             <input type="submit" class="button is-primary">

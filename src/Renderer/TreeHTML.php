@@ -39,11 +39,13 @@ class TreeHTML extends FlatHTML
                 $epic = $row['epic_title'];
                 if ($epic) {
                     $tree['sub'][$epic]['name'] = 'Epic "' . htmlspecialchars($row['epic_title']) . '"';
+                    $tree['sub'][$epic]['estimate'] = $row['epic_estimate'];
                 } else {
                     $tree['sub'][$epic]['name'] = '<i>No Epic</i>';
                 }
 
                 unset($row['epic_title']);
+                unset($row['epic_estimate']);
             } else {
                 $epic = '–';
             }
@@ -52,10 +54,12 @@ class TreeHTML extends FlatHTML
                 $sprint = $row['sprint_title'];
                 if ($sprint) {
                     $tree['sub'][$epic]['sub'][$sprint]['name'] = 'Sprint "' . htmlspecialchars($row['sprint_title']) . '"';
+                    $tree['sub'][$epic]['sub'][$sprint]['estimate'] = $row['sprint_estimate'];
                 } else {
                     $tree['sub'][$epic]['sub'][$sprint]['name'] = '<i>No Sprint</i>';
                 }
 
+                unset($row['sprint_estimate']);
                 unset($row['sprint_title']);
             } else {
                 $sprint = '–';
@@ -67,7 +71,9 @@ class TreeHTML extends FlatHTML
                     $this->formatIssueId($row['issue_id']) . ' ' .
                     htmlspecialchars($row['issue_title'] .
                         ' (' . $row['issue_type'] . ')');
+                $tree['sub'][$epic]['sub'][$sprint]['sub'][$issue]['estimate'] = $row['issue_estimate'];
 
+                unset($row['issue_estimate']);
                 unset($row['issue_id']);
                 unset($row['issue_title']);
                 unset($row['issue_type']);
@@ -102,7 +108,7 @@ class TreeHTML extends FlatHTML
         }
 
         $cats = count($this->categories);
-        $doc = '<table class="table is-striped is-narrow is-hoverable is-fullwidth">';
+        $doc = '<table class="table is-narrow is-hoverable is-fullwidth">';
         $doc .= parent::renderHeaders(array_keys($row), $cats);
         $doc .= $this->renderTree($tree, $cols + $cats, 0);
         $doc .= '</table>';
@@ -127,10 +133,18 @@ class TreeHTML extends FlatHTML
             foreach ($tree['sub'] as $name => $item) {
                 $doc .= '<tr>';
                 $doc .= implode('', array_fill(0, $level, '<th>&nbsp;</th>'));
-                $doc .= '<th colspan="' . $span . '">';
+                $doc .= '<th colspan="' . $span . '" class="has-background-white-ter">';
                 $doc .= $item['name'];
+                if(!empty($item['estimate'])) {
+                    if($item['estimate'] >= $item['log']) {
+                        $color = 'success';
+                    } else {
+                        $color = 'danger';
+                    }
+                    $doc .= ' <small class="has-text-'.$color.'">Estimate: '.$this->formatValue('estimate', $item['estimate']).'</small>';
+                }
                 $doc .= '</th>';
-                $doc .= '<th>';
+                $doc .= '<th class="has-background-white-ter">';
                 $doc .= 'Σ'.$this->formatValue('logged', $item['log']);
                 $doc .= '</th>';
                 $doc .= '</tr>';
