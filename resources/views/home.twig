@@ -1,15 +1,33 @@
 {% extends 'layout.twig' %}
+{% import 'form.twig' as form %}
 
 {% block content %}
-    <ul>
-        {% for project, info in projects %}
-            <li>
-                <a href="{{ path_for('project', {'project':project}) }}">{{ project }}</a>
-                (updated {{ info.time|date('Y-m-d H:i') }}, {{ info.size/1024 }}kB)
-                {% if(info.size < 100*1024) %}
-                    <span class="has-text-danger">is probably empty!</span>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="columns">
+
+        <ul class="column">
+            {% for project, info in projects %}
+                <li>
+                    <a href="{{ path_for('project', {'project':project}) }}">{{ project }}</a>
+                    (updated {{ info.time|date('Y-m-d H:i') }}, {{ info.size/1024 }}kB)
+                    {% if(info.size < 100*1024) %}
+                        <span class="has-text-danger">is probably empty!</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form class="column" method="POST" action="{{ path_for('home-addProject') }}">
+            <div class="field has-addons">
+                <div class="control">
+                    <input class="input" type="text" name="add" placeholder="Project Key">
+                </div>
+                <div class="control">
+                    <button class="button is-primary" type="submit">
+                        Add
+                    </button>
+                </div>
+            </div>
+            <p class="help">Note: Data is imported periodically from cron</p>
+        </form>
+    </div>
 {% endblock %}
