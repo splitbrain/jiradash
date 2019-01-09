@@ -15,9 +15,11 @@ class TreeHTML extends FlatHTML
 
         // what do we are our categories?
         $vals = [];
-        foreach (['epics', 'sprints', 'issues', 'userlogs', 'worklogs'] as $flag) {
+        foreach (['epics', 'versions', 'sprints', 'issues', 'userlogs', 'worklogs'] as $flag) {
             if (!empty($rc[$flag])) $vals[$flag] = 1;
         }
+        if (isset($vals['epics']) && isset($vals['versions'])) unset($vals['versions']);
+
         array_pop($vals); // last one is the smallest resolution, not a category
         $this->categories = $vals;
     }
@@ -47,6 +49,19 @@ class TreeHTML extends FlatHTML
 
                 unset($row['epic_title']);
                 unset($row['epic_estimate']);
+            } elseif (isset($this->categories['versions'])) {
+                // we handle versions like epics, but we only support either one!
+                $epic = $row['version_title'];
+                if ($epic) {
+                    $tree['sub'][$epic]['name'] = 'Version "' . htmlspecialchars($row['version_title']) . '"';
+                    $tree['sub'][$epic]['estimate'] = $row['version_estimate'];
+                    $tree['sub'][$epic]['offer'] = $row['version_offer'];
+                } else {
+                    $tree['sub'][$epic]['name'] = '<i>No Version</i>';
+                }
+
+                unset($row['version_title']);
+                unset($row['version_estimate']);
             } else {
                 $epic = '–';
             }
