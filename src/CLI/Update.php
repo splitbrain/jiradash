@@ -87,6 +87,19 @@ class Update extends AbstractCLI
         foreach ($issues['issues'] as $issue) {
             $this->info($issue['key']);
 
+            // handle versions
+            $version = null;
+            if(isset($issue['fields']['fixVersions'][0])) {
+                $version = $issue['fields']['fixVersions'][0];
+                $insert = [
+                    'id' => $version['id'],
+                    'title' => $version['name'],
+                    'description' => $version['description'],
+                    'offer' => self::parseOfferEstimate($version['description']),
+                ];
+                $this->db->insertRecord('version', $insert);
+            }
+
             // handle sprint
             $sprint = $this->findSprint($issue['fields']);
             if ($sprint) {
@@ -116,6 +129,7 @@ class Update extends AbstractCLI
                     'id' => preg_replace('/\D+/', '', $issue['key']),
                     'sprint_id' => $sprint ? $sprint['id'] : null,
                     'epic_id' => preg_replace('/\D+/', '', $issue['fields'][$this->container->settings['app']['fields']['epic_link']]),
+                    'version_id' => $version ? $version['id'] : null,
                     'title' => $issue['fields']['summary'],
                     'description' => $issue['fields']['description'],
                     'estimate' => (int)$issue['fields']['aggregatetimeoriginalestimate'],
@@ -256,6 +270,15 @@ class Update extends AbstractCLI
                 )
                 UPDATE epic
                     SET estimate = (SELECT estimate FROM a WHERE a.epic_id = epic.id)';
+        $this->db->exec($sql);
+
+        $sql = 'WITH a AS(
+                    SELECT version_id, SUM(i.estimate) as estimate
+                      FROM issue AS i
+                  GROUP BY version_id
+                )
+                UPDATE version
+                    SET estimate = (SELECT estimate FROM a WHERE a.version_id = version.id)';
         $this->db->exec($sql);
     }
 

@@ -50,6 +50,16 @@ class ReportBuilder
         $this->wheres['end'] = "DATE(w.created) <= DATE(" . $this->db->pdo()->quote($date) . ')';
     }
 
+    public function showVersions()
+    {
+        $this->columns['v.title'] = 'version_title';
+        $this->columns['v.offer'] = 'version_offer';
+        $this->columns['v.estimate'] = 'version_estimate';
+
+        $this->groups[] = 'v.id';
+        $this->orders[5] = 'v.title ASC';
+    }
+
     public function showEpics()
     {
         $this->columns['e.title'] = 'epic_title';
@@ -59,6 +69,7 @@ class ReportBuilder
         $this->groups[] = 'e.id';
         $this->orders[10] = 'e.title ASC';
     }
+
 
     public function showSprints()
     {
@@ -114,6 +125,7 @@ class ReportBuilder
         // from tables
         $sql .= "FROM issue AS i\n";
         $sql .= "LEFT JOIN epic AS e ON i.epic_id = e.id\n";
+        $sql .= "LEFT JOIN version AS v ON i.version_id = v.id\n";
         $sql .= "LEFT JOIN sprint AS s ON i.sprint_id = s.id\n";
         $sql .= "LEFT JOIN worklog w on i.id = w.issue_id\n";
 

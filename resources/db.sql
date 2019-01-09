@@ -16,10 +16,19 @@ CREATE TABLE "epic" (
   "created" DATETIME NOT NULL
 );
 
+CREATE TABLE "version" (
+  "id" INTEGER NOT NULL PRIMARY KEY,
+  "title" TEXT NOT NULL,
+  "description" TEXT NOT NULL DEFAULT '',
+  "estimate" INTEGER NOT NULL DEFAULT 0,
+  "offer" INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE "issue" (
   "id" INTEGER NOT NULL PRIMARY KEY,
   "sprint_id" INTEGER NULL,
   "epic_id" INTEGER NULL,
+  "version_id" INTEGER NULL,
   "title" TEXT NOT NULL,
   "description" TEXT NOT NULL DEFAULT '',
   "estimate" INTEGER NOT NULL DEFAULT 0,

@@ -17,6 +17,7 @@ class ProjectController extends BaseController
 {
     protected $default = [
         'epics' => 0,
+        'versions' => 0,
         'sprints' => 1,
         'issues' => 0,
         'userlogs' => 1,
