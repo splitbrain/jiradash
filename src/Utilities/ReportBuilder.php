@@ -94,6 +94,7 @@ class ReportBuilder
     {
         $this->columns['w.user'] = 'worklog_user';
         $this->columns['w.created'] = 'worklog_created';
+        $this->columns['w.description'] = 'worklog_description';
 
         $this->groups[] = 'w.id';
         $this->orders[50] = 'w.created DESC';

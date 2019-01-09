@@ -13,13 +13,17 @@ abstract class AbstractRenderer
 
     protected $columnNames = [
         'epic_title' => 'Epic',
+        'epic_estimate' => 'Epic Est.',
         'sprint_title' => 'Sprint',
+        'sprint_estimate' => 'Sprint Est.',
         'issue_id' => 'ID',
         'issue_type' => 'Type',
         'issue_title' => 'Title',
+        'issue_estimate' => 'Issue Est.',
         'worklog_user' => 'User',
         'worklog_created' => 'Log Date',
         'worklog_logged' => 'Logged',
+        'worklog_description' => 'Worklog',
     ];
 
     public function __construct(Container $container, $rc, $project)
@@ -73,5 +77,11 @@ abstract class AbstractRenderer
     protected function formatEstimate($value)
     {
         return $this->formatLogged($value);
+    }
+
+    protected function formatCreated($value)
+    {
+        if(!$value) return '';
+        return date('Y-m-d', strtotime($value));
     }
 }
