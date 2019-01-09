@@ -2,53 +2,61 @@
 {% import 'form.twig' as form %}
 
 {% block content %}
-
-    <form action="{{ path_for('project', {'project': project}) }}" method="POST" class="card">
-        <div class="card-content">
-            <div class="columns">
-                <div class="column">
-                    {{ form.checkbox('Epics', 'rc[epics]', '1', rc.epics) }}
-                    {{ form.checkbox('Sprints', 'rc[sprints]', '1', rc.sprints) }}
-                    {{ form.checkbox('Issues', 'rc[issues]', '1', rc.issues) }}
-                    {{ form.checkbox('Worker', 'rc[userlogs]', '1', rc.userlogs) }}
-                    {{ form.checkbox('Worklogs', 'rc[worklogs]', '1', rc.worklogs) }}
-                </div>
-
-                <div class="column">
-                    {{ form.input('Worklog Start', 'rc[start]', rc.start, 'date') }}
-                    {{ form.input('Worklog End', 'rc[end]', rc.end, 'date') }}
-
-                    {{ form.dropdown('Renderer', 'rc[renderer]', {'FlatHTML':'flat', 'TreeHTML':'nested'}, rc.renderer) }}
-                    {{ form.checkbox('Show Hours', 'rc[hours]', '1', rc.hours) }}
-                </div>
-            </div>
-            <input type="submit" class="button is-primary">
-        </div>
+    <form action="{{ path_for('project', {'project': project}) }}" method="POST" class="card-content">
 
 
-    </form>
-
-    {% if error %}
-        <div>{{ error }}</div>
-    {% endif %}
-
-    {% if result %}
         <div class="card">
             <div class="card-content">
-                {{ result|raw }}
+                <div class="columns">
+                    <div class="column">
+                        {{ form.checkbox('Epics', 'rc[epics]', '1', rc.epics) }}
+                        {{ form.checkbox('Sprints', 'rc[sprints]', '1', rc.sprints) }}
+                        {{ form.checkbox('Issues', 'rc[issues]', '1', rc.issues) }}
+                        {{ form.checkbox('Worker', 'rc[userlogs]', '1', rc.userlogs) }}
+                        {{ form.checkbox('Worklogs', 'rc[worklogs]', '1', rc.worklogs) }}
+                    </div>
+
+                    <div class="column">
+                        {{ form.input('Worklog Start', 'rc[start]', rc.start, 'date') }}
+                        {{ form.input('Worklog End', 'rc[end]', rc.end, 'date') }}
+
+                        {{ form.dropdown('Renderer', 'rc[renderer]', {'FlatHTML':'flat', 'TreeHTML':'nested'}, rc.renderer) }}
+                        {{ form.checkbox('Show Hours', 'rc[hours]', '1', rc.hours) }}
+                    </div>
+                </div>
+                <button type="submit" class="button is-primary">Submit</button>
             </div>
         </div>
-    {% endif %}
 
-    <div class="card">
-        <form action="{{ path_for('project', {'project': project}) }}" method="POST" class="card-content">
-            <h2 class="subtitle">Customize SQL</h2>
-            <div class="field">
-                <div class="control">
-                    <textarea class="textarea" name="sql">{{ sql }}</textarea>
+        {% if error %}
+            <div>{{ error }}</div>
+        {% endif %}
+
+        {% if result %}
+            <div class="card">
+                <div class="card-content">
+                    {{ result|raw }}
                 </div>
             </div>
-            <input type="submit" class="button is-primary">
-        </form>
-    </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="subtitle">Customize SQL</h2>
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea" name="sql">{{ sql }}</textarea>
+                    </div>
+                </div>
+                <button name="custom" value="true" type="submit" class="button is-primary">Submit custom SQL</button>
+
+                {% if rc.renderer == 'TreeHTML' %}
+                    <div class="help is-danger">Note: the nested Renderer expects certain result fields, it may fail if
+                        your query does not select them! Use the flat renderer instead.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </form>
 {% endblock %}

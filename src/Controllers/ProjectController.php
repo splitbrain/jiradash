@@ -45,7 +45,7 @@ class ProjectController extends BaseController
         $rc = $request->getParam('rc', $this->default);
 
         // use report builder when no custom SQL is given
-        if (!$sql) {
+        if (!$request->getParam('custom', false)) {
             $rb = ReportBuilder::fromConfig($db, $rc);
             $sql = $rb->getSQL();
         }
