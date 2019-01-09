@@ -3,6 +3,7 @@
 namespace splitbrain\JiraDash;
 
 use Slim\Views\Twig;
+use splitbrain\JiraDash\Controllers\ErrorHandler;
 use splitbrain\JiraDash\Service\ConfigurationManager;
 use splitbrain\JiraDash\Service\DataBaseManager;
 
@@ -40,7 +41,7 @@ class Container extends \Slim\Container
         parent::__construct($config->getConfiguration());
 
         // we want exceptions
-        #set_error_handler([ErrorHandler::class, 'errorConverter']);
+        set_error_handler([ErrorHandler::class, 'errorConverter']);
 
         $this['config'] = $config;
 
@@ -68,7 +69,6 @@ class Container extends \Slim\Container
         };
 
         // custom error handling
-        /*
         $this['errorHandler'] = function ($c) {
             return new ErrorHandler($c);
         };
@@ -80,7 +80,6 @@ class Container extends \Slim\Container
                 return (new ErrorHandler($c))->notFound($request, $response);
             };
         };
-        */
     }
 
 }

@@ -1,0 +1,14 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+    <div class="errorView">
+        <div class="notification is-{{ severity }}">
+            {{ error }}
+        </div>
+        {% if details %}
+            <div>
+                <pre>{{ details }}</pre>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
