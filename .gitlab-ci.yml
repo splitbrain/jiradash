@@ -1,0 +1,41 @@
+stages:
+#  - test  # disabled until we figure out how to get a newer test image
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+cache:
+  paths:
+    - vendor/
+
+#php-7:
+#  image: debian:stable-slim
+#  stage: test
+#  tags:
+#    - docker
+#  script:
+#    - apt-get update
+#    - apt-get install -y php-cli php-bz2 php-gd php-zip php-simplexml php-mbstring php-sqlite3 wget curl gnupg apt-transport-https php-curl
+#    - apt-get update
+#    - wget https://getcomposer.org/composer.phar -O composer.phar && chmod 755 composer.phar
+#    - ./composer.phar install --no-interaction --no-progress
+#    - ./composer.phar test
+
+deploy to production:
+  stage: deploy
+  image: cosmocode/deploy
+  environment:
+    name: production
+    url: https://jira-dash.cosmoco.de/
+  tags:
+    - docker
+    - always_on
+  only:
+    - master
+  before_script:
+    - mkdir ~/.ssh; chmod 0700 ~/.ssh
+    - echo "$PRIVATE_DEPLOY_KEY" > ~/.ssh/id_rsa && chmod 0400 ~/.ssh/id_rsa
+    - cp /fabfile.py $PWD
+  script:
+    - fab deploy

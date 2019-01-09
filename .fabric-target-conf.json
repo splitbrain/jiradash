@@ -1,0 +1,11 @@
+{
+  "deploy to production": {
+    "TARGET_HOST": "jira-dash.cosmoco.de",
+    "TARGET_USER": "ci",
+    "TARGET_PATH": "/var/www/jiradash",
+    "POST_CMDS": [
+      "composer install --no-dev",
+      "bin/update.php"
+    ]
+  }
+}
