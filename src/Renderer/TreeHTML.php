@@ -40,6 +40,7 @@ class TreeHTML extends FlatHTML
                 if ($epic) {
                     $tree['sub'][$epic]['name'] = 'Epic "' . htmlspecialchars($row['epic_title']) . '"';
                     $tree['sub'][$epic]['estimate'] = $row['epic_estimate'];
+                    $tree['sub'][$epic]['offer'] = $row['epic_offer'];
                 } else {
                     $tree['sub'][$epic]['name'] = '<i>No Epic</i>';
                 }
@@ -55,6 +56,7 @@ class TreeHTML extends FlatHTML
                 if ($sprint) {
                     $tree['sub'][$epic]['sub'][$sprint]['name'] = 'Sprint "' . htmlspecialchars($row['sprint_title']) . '"';
                     $tree['sub'][$epic]['sub'][$sprint]['estimate'] = $row['sprint_estimate'];
+                    $tree['sub'][$epic]['sub'][$sprint]['offer'] = $row['sprint_offer'];
                 } else {
                     $tree['sub'][$epic]['sub'][$sprint]['name'] = '<i>No Sprint</i>';
                 }
@@ -135,16 +137,29 @@ class TreeHTML extends FlatHTML
                 $doc .= implode('', array_fill(0, $level, '<th>&nbsp;</th>'));
                 $doc .= '<th colspan="' . $span . '" class="has-background-white-ter">';
                 $doc .= $item['name'];
+
                 if (!empty($item['estimate'])) {
                     if ($item['estimate'] >= $item['log']) {
                         $color = 'success';
                     } else {
                         $color = 'danger';
                     }
-                    $doc .= '<small class="is-pulled-right has-text-' . $color . '">';
+                    $doc .= '<small class="is-pulled-right has-text-' . $color . '" style="padding: 0.1em 0.2em">';
                     $doc .= 'Estimate: ' . $this->formatValue('estimate', $item['estimate']);
-                    $doc .= '</small>';
+                    $doc .= '</small> ';
                 }
+
+                if (!empty($item['offer'])) {
+                    if ($item['offer'] >= $item['log']) {
+                        $color = 'success';
+                    } else {
+                        $color = 'danger';
+                    }
+                    $doc .= '<small class="is-pulled-right has-text-' . $color . '" style="padding: 0.1em 0.2em">';
+                    $doc .= 'Offer: ' . $this->formatValue('estimate', $item['estimate']);
+                    $doc .= '</small> ';
+                }
+
                 $doc .= '</th>';
                 $doc .= '<th class="has-background-white-ter">';
                 $doc .= 'Σ' . $this->formatValue('logged', $item['log']);

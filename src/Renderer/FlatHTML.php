@@ -56,6 +56,7 @@ class FlatHTML extends AbstractRenderer
     {
         if ($name === 'issue_id') return $this->formatIssueId($value);
         if (substr($name, -8) === 'estimate') return $this->formatEstimate($value);
+        if (substr($name, -5) === 'offer') return $this->formatEstimate($value);
         return htmlspecialchars(parent::formatValue($name, $value));
     }
 
