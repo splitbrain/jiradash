@@ -53,6 +53,7 @@ class ReportBuilder
     public function showEpics()
     {
         $this->columns['e.title'] = 'epic_title';
+        $this->columns['e.offer'] = 'epic_offer';
         $this->columns['e.estimate'] = 'epic_estimate';
 
         $this->groups[] = 'e.id';
@@ -62,6 +63,7 @@ class ReportBuilder
     public function showSprints()
     {
         $this->columns['s.title'] = 'sprint_title';
+        $this->columns['s.offer'] = 'sprint_offer';
         $this->columns['s.estimate'] = 'sprint_estimate';
 
         $this->groups[] = 's.id';

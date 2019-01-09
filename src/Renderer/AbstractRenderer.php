@@ -14,8 +14,10 @@ abstract class AbstractRenderer
     protected $columnNames = [
         'epic_title' => 'Epic',
         'epic_estimate' => 'Epic Est.',
+        'epic_offer' => 'Epic Offer',
         'sprint_title' => 'Sprint',
         'sprint_estimate' => 'Sprint Est.',
+        'sprint_offer' => 'Sprint Offer',
         'issue_id' => 'ID',
         'issue_type' => 'Type',
         'issue_title' => 'Title',
@@ -75,6 +77,11 @@ abstract class AbstractRenderer
     }
 
     protected function formatEstimate($value)
+    {
+        return $this->formatLogged($value);
+    }
+
+    protected function formatOffer($value)
     {
         return $this->formatLogged($value);
     }

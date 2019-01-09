@@ -13,17 +13,22 @@
     "guzzlehttp/guzzle": "^6.3",
     "ext-json": "*",
     "ext-pdo": "*",
+    "ext-pdo_sqlite": "*",
     "slim/slim": "^3.0",
     "slim/twig-view": "^2.0",
     "psr/log": "^1.0",
     "nette/neon": "^2.4"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master"
+    "roave/security-advisories": "dev-master",
+    "phpunit/phpunit": "^6.5"
   },
   "autoload": {
     "psr-4": {
       "splitbrain\\JiraDash\\": "src"
     }
+  },
+  "scripts": {
+    "test": "phpunit -c tests/phpunit.xml --colors=always"
   }
 }

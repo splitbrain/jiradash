@@ -94,7 +94,8 @@ class Update extends AbstractCLI
                     'id' => $sprint['id'],
                     'title' => $sprint['name'],
                     'description' => $sprint['goal'],
-                    'created' => $this->dateClean($sprint['startDate'])
+                    'created' => $this->dateClean($sprint['startDate']),
+                    'offer' => self::parseOfferEstimate($sprint['goal']),
                 ];
                 $this->db->insertRecord('sprint', $insert);
             }
@@ -106,6 +107,7 @@ class Update extends AbstractCLI
                     'title' => $issue['fields'][$this->container->settings['app']['fields']['epic_title']],
                     'description' => $issue['fields']['summary'],
                     'created' => $this->dateClean($issue['fields']['created']),
+                    'offer' => (int)$issue['fields']['aggregatetimeoriginalestimate'],
                 ];
                 $this->db->insertRecord('epic', $insert);
             } else {
@@ -147,6 +149,33 @@ class Update extends AbstractCLI
     }
 
     /**
+     * Parse estimates from descriptions
+     *
+     * @param $string
+     * @return int
+     */
+    public static function parseOfferEstimate($string)
+    {
+        if (preg_match('/est(?:imated?)?: ?([\d\.,]+)([dhm])/i', $string, $m)) {
+            $val = floatval(str_replace(',', '.', $m[1]));
+            $unit = strtolower($m[2]);
+
+            // convert to seconds
+            if ($unit === 'd') {
+                $val = $val * 60 * 60 * 8;
+            } elseif ($unit === 'h') {
+                $val = $val * 60 * 60;
+            } else {
+                $val = $val * 60;
+            }
+
+            return (int) $val;
+        }
+
+        return 0;
+    }
+
+    /**
      * Import worklogs
      *
      * @param string $project
@@ -172,7 +201,9 @@ class Update extends AbstractCLI
                 $got++;
             } catch (\Exception $e) {
                 $this->debug(print_r($insert, true));
-                $this->error('failed to insert worklog for issue {issue}', ['issue' => $insert['id']]);
+                $this->error('failed to insert worklog for issue {issue} {msg}',
+                    ['issue' => $insert['issue_id'], 'msg' => $e->getMessage()]
+                );
                 continue;
             }
         }

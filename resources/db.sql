@@ -3,6 +3,7 @@ CREATE TABLE "sprint" (
   "title" TEXT NOT NULL,
   "description" TEXT NOT NULL DEFAULT '',
   "estimate" INTEGER NOT NULL DEFAULT 0,
+  "offer" INTEGER NOT NULL DEFAULT 0,
   "created" DATETIME NOT NULL
 );
 
@@ -11,6 +12,7 @@ CREATE TABLE "epic" (
   "title" TEXT NOT NULL,
   "description" TEXT NOT NULL DEFAULT '',
   "estimate" INTEGER NOT NULL DEFAULT 0,
+  "offer" INTEGER NOT NULL DEFAULT 0,
   "created" DATETIME NOT NULL
 );
 
