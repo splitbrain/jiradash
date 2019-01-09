@@ -2,8 +2,14 @@
 
 {% block content %}
     <ul>
-        {% for project in projects %}
-            <li><a href="{{ path_for('project', {'project':project}) }}">{{ project }}</a></li>
+        {% for project, info in projects %}
+            <li>
+                <a href="{{ path_for('project', {'project':project}) }}">{{ project }}</a>
+                (updated {{ info.time|date('Y-m-d H:i') }}, {{ info.size/1024 }}kB)
+                {% if(info.size < 100*1024) %}
+                    <span class="has-text-danger">is probably empty!</span>
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

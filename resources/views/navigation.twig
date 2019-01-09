@@ -22,7 +22,7 @@
                 </a>
 
                 <div class="navbar-dropdown">
-                    {% for project in projects %}
+                    {% for project, info in projects %}
                         <a class="navbar-item" href="{{ path_for('project', {'project':project}) }}">{{ project }}</a>
                     {% endfor %}
                 </div>

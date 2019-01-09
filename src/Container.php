@@ -53,7 +53,7 @@ class Container extends \Slim\Container
 
             //set view variables
             $view->offsetSet('config', $c->settings['app']);
-            $view->offsetSet('projects', $c->getProjects());
+            $view->offsetSet('projects', $c->db->getProjects());
 
             $view->addExtension(new \Twig_Extension_Debug());
             $view->addExtension(new \Slim\Views\TwigExtension(
@@ -83,18 +83,4 @@ class Container extends \Slim\Container
         */
     }
 
-    /**
-     * Returnns all the available projects
-     *
-     * @return string[]
-     */
-    public function getProjects()
-    {
-        $list = glob($this->config->getDataDir() . '*.sqlite');
-        $list = array_map(function ($in) {
-            return basename($in, '.sqlite');
-        }, $list);
-        sort($list);
-        return $list;
-    }
 }

@@ -12,6 +12,9 @@ class DataBaseManager
     /** @var SqlHelper[] */
     protected $connections;
 
+    /** @var string */
+    protected $schemafile;
+
     /**
      * DataBaseManager constructor.
      * @param Container $c
@@ -19,6 +22,7 @@ class DataBaseManager
     public function __construct(Container $c)
     {
         $this->container = $c;
+        $this->schemafile = $this->container->config->getResourcesDir() . 'db.sql';
     }
 
     /**
@@ -29,18 +33,19 @@ class DataBaseManager
      */
     public function accessDB($project, $create = false)
     {
-        if(isset($this->connections[$project])) {
+        if (isset($this->connections[$project])) {
             return $this->connections[$project];
         }
 
         $dbdir = $this->container->config->getDataDir();
         $dbfile = $dbdir . $project . '.sqlite';
-        if (file_exists($dbfile)) {
-            if($create) {
+        if (file_exists($dbfile) && filesize($dbfile) > 0) {
+            // rebuild whole database if schemafile was updated
+            if ($create && filemtime($this->schemafile) > filemtime($dbfile)) {
                 unlink($dbfile);
             }
         } else {
-            if(!$create) {
+            if (!$create) {
                 throw new \Exception('no database file');
             }
         }
@@ -51,17 +56,37 @@ class DataBaseManager
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         $this->connections[$project] = new SqlHelper($pdo);
-        if($create) {
+        if ($create && (!file_exists($dbfile) || filesize($dbfile) == 0)) {
             $this->create($this->connections[$project]);
         }
 
         return $this->connections[$project];
     }
 
-    protected function create(SqlHelper $db) {
-        $sql = file_get_contents($this->container->config->getResourcesDir().'db.sql');
+    protected function create(SqlHelper $db)
+    {
+        $sql = file_get_contents($this->schemafile);
         $db->begin();
         $db->pdo()->exec($sql);
         $db->commit();
+    }
+
+    /**
+     * Returns all the available projects
+     *
+     * @return array basename => [time => timestamp, size => size]
+     */
+    public function getProjects()
+    {
+        $files = glob($this->container->config->getDataDir() . '*.sqlite');
+        $list = [];
+        foreach ($files as $file) {
+            $list[basename($file, '.sqlite')] = [
+                'time' => filemtime($file),
+                'size' => filesize($file),
+            ];
+        }
+        ksort($list);
+        return $list;
     }
 }

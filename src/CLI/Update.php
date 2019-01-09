@@ -5,7 +5,6 @@ namespace splitbrain\JiraDash\CLI;
 use splitbrain\JiraDash\Service\JiraAPI;
 use splitbrain\JiraDash\Service\TempoAPI;
 use splitbrain\JiraDash\Utilities\SqlHelper;
-use splitbrain\phpcli\Exception;
 
 class Update extends AbstractCLI
 {
@@ -27,8 +26,7 @@ class Update extends AbstractCLI
     protected function setup(\splitbrain\phpcli\Options $options)
     {
         $options->setHelp('update data');
-        $options->registerArgument('project', 'The project shortcut key');
-
+        $options->registerArgument('projects...', 'The project shortcut keys. Leave empty to update all.', false);
     }
 
     /**
@@ -45,7 +43,7 @@ class Update extends AbstractCLI
      */
     protected function main(\splitbrain\phpcli\Options $options)
     {
-        $this->jiraAPI = new \splitbrain\JiraDash\Service\JiraAPI(
+        $this->jiraAPI = new JiraAPI(
             $this->container->settings['app']['api']['user'],
             $this->container->settings['app']['api']['pass'],
             $this->container->settings['app']['api']['base']
@@ -55,16 +53,24 @@ class Update extends AbstractCLI
             $this->container->settings['app']['tempo']['token']
         );
 
-        $args = $options->getArgs();
-        $project = $args[0];
+        $projects = $options->getArgs();
+        if (!count($projects)) $projects = array_keys($this->container->db->getProjects());
 
-
-        $this->db = $this->container->db->accessDB($project, true);
-
-        $this->importProject($project);
-        $this->importTimeSheetLogs($project);
-        $this->aggregateEstimates();
+        foreach ($projects as $project) {
+            $this->info("Updating $project...");
+            try {
+                $this->db = $this->container->db->accessDB($project, true);
+                $this->importProject($project);
+                $this->importTimeSheetLogs($project);
+                $this->aggregateEstimates();
+                $this->success("Updated $project");
+            } catch (\Exception $e) {
+                $this->debug($e->getTraceAsString());
+                $this->error($e->getMessage());
+            }
+        }
     }
+
 
     /**
      * @param string $project
