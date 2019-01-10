@@ -2,6 +2,11 @@
 
 namespace splitbrain\JiraDash\Utilities;
 
+/**
+ * Class ReportBuilder
+ *
+ * Creates the SQL based on configuration
+ */
 class ReportBuilder
 {
     /** @var SqlHelper */
@@ -18,11 +23,23 @@ class ReportBuilder
 #        'nozero' => 'w.logged > 0'  // make this an option
     ];
 
+    /**
+     * ReportBuilder constructor.
+     *
+     * @param SqlHelper $db
+     */
     public function __construct(SqlHelper $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Factory method to initialize a ReportBuilder from a given config
+     *
+     * @param SqlHelper $db
+     * @param array $conf
+     * @return ReportBuilder
+     */
     public static function fromConfig(SqlHelper $db, $conf): ReportBuilder
     {
         $rb = new ReportBuilder($db);
@@ -40,16 +57,29 @@ class ReportBuilder
         return $rb;
     }
 
+    /**
+     * Only show results with worklogs after this date
+     *
+     * @param string $date
+     */
     public function setStart($date)
     {
         $this->wheres['start'] = "DATE(w.created) >= DATE(" . $this->db->pdo()->quote($date) . ')';
     }
 
+    /**
+     * Only show results with worklogs before this date
+     *
+     * @param string $date
+     */
     public function setEnd($date)
     {
         $this->wheres['end'] = "DATE(w.created) <= DATE(" . $this->db->pdo()->quote($date) . ')';
     }
 
+    /**
+     * Include versions in the result
+     */
     public function showVersions()
     {
         $this->columns['v.title'] = 'version_title';
@@ -60,6 +90,9 @@ class ReportBuilder
         $this->orders[5] = 'v.title ASC';
     }
 
+    /**
+     * Include epics in the result
+     */
     public function showEpics()
     {
         $this->columns['e.title'] = 'epic_title';
@@ -70,7 +103,9 @@ class ReportBuilder
         $this->orders[10] = 'e.title ASC';
     }
 
-
+    /**
+     * Include sprints in the result
+     */
     public function showSprints()
     {
         $this->columns['s.title'] = 'sprint_title';
@@ -82,6 +117,9 @@ class ReportBuilder
         $this->orders[21] = 's.title ASC';
     }
 
+    /**
+     * Include issues in the result
+     */
     public function showIssues()
     {
         $this->columns['i.id'] = 'issue_id';
@@ -95,6 +133,9 @@ class ReportBuilder
         $this->orders[30] = 'i.id DESC';
     }
 
+    /**
+     * Include users in the result
+     */
     public function showUserlogs()
     {
         $this->columns['w.user'] = 'worklog_user';
@@ -103,6 +144,9 @@ class ReportBuilder
         $this->orders[40] = 'w.user ASC';
     }
 
+    /**
+     * Include worklogs in the result
+     */
     public function showWorklogs()
     {
         $this->columns['w.user'] = 'worklog_user';
@@ -113,6 +157,11 @@ class ReportBuilder
         $this->orders[50] = 'w.created DESC';
     }
 
+    /**
+     * Get the SQL for the current report configuration
+     *
+     * @return string
+     */
     public function getSQL()
     {
         // select columns

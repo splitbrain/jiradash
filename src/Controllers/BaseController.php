@@ -4,7 +4,6 @@ namespace splitbrain\JiraDash\Controllers;
 
 /**
  * Class BaseController
- * @package CosmoCode\PMIDashboard
  */
 abstract class BaseController
 {

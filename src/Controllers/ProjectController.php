@@ -7,14 +7,17 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use splitbrain\JiraDash\Renderer\AbstractRenderer;
 use splitbrain\JiraDash\Utilities\ReportBuilder;
-use splitbrain\JiraDash\Utilities\SqlHelper;
 
 /**
- * Class HomeController
- * @package CosmoCode\PMIDashboard\Controllers
+ * Class ProjectController
+ *
+ * The main view to analyze a project
  */
 class ProjectController extends BaseController
 {
+    /**
+     * @var array the default report setup
+     */
     protected $default = [
         'epics' => 0,
         'versions' => 0,
@@ -27,6 +30,8 @@ class ProjectController extends BaseController
 
 
     /**
+     * Execute queries and display reports
+     *
      * @param Request $request
      * @param Response $response
      * @return \Psr\Http\Message\ResponseInterface
@@ -51,6 +56,7 @@ class ProjectController extends BaseController
             $sql = $rb->getSQL();
         }
 
+        // execute the query
         $error = '';
         $result = [];
         if ($sql) {
@@ -61,6 +67,7 @@ class ProjectController extends BaseController
             }
         }
 
+        // create the wanted renderer
         $rclass = '\\splitbrain\\JiraDash\\Renderer\\' . $rc['renderer'];
         /** @var AbstractRenderer $r */
         $r = new $rclass($this->container, $rc, $project);
@@ -74,14 +81,4 @@ class ProjectController extends BaseController
             'error' => $error,
         ]);
     }
-
-
-    protected function runSQL(SqlHelper $db, $sql)
-    {
-
-        $result = $db->queryAll($sql);
-
-        return $result;
-    }
-
 }

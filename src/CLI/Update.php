@@ -6,6 +6,11 @@ use splitbrain\JiraDash\Service\JiraAPI;
 use splitbrain\JiraDash\Service\TempoAPI;
 use splitbrain\JiraDash\Utilities\SqlHelper;
 
+/**
+ * Class Update
+ *
+ * Command Line Tool to update all project data
+ */
 class Update extends AbstractCLI
 {
     /** @var JiraAPI */
@@ -18,25 +23,19 @@ class Update extends AbstractCLI
     /**
      * Register options and arguments on the given $options object
      *
-     * @param \splitbrain\phpcli\Options $options
-     * @return void
-     *
+     * @inheritdoc
      * @throws \splitbrain\phpcli\Exception
      */
     protected function setup(\splitbrain\phpcli\Options $options)
     {
-        $options->setHelp('update data');
+        $options->setHelp('Update project data by fetching it from the APIs into SQLite databases.');
         $options->registerArgument('projects...', 'The project shortcut keys. Leave empty to update all.', false);
     }
 
     /**
-     * Your main program
+     * Main program
      *
-     * Arguments and options have been parsed when this is run
-     *
-     * @param \splitbrain\phpcli\Options $options
-     * @return void
-     *
+     * @inheritdoc
      * @throws \splitbrain\phpcli\Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Exception
@@ -71,8 +70,9 @@ class Update extends AbstractCLI
         }
     }
 
-
     /**
+     * Imports issues via Jira REST API for a given project key
+     *
      * @param string $project
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Exception
@@ -150,10 +150,10 @@ class Update extends AbstractCLI
     }
 
     /**
-     * Cleans a Jira data into a SQLite compatible datetime
+     * Cleans a Jira date data into a SQLite compatible datetime
      *
-     * @param $string
-     * @return string
+     * @param string $string Original Jira Date
+     * @return string Cleaned Date
      */
     protected function dateClean($string)
     {
@@ -165,8 +165,8 @@ class Update extends AbstractCLI
     /**
      * Parse estimates from descriptions
      *
-     * @param $string
-     * @return int
+     * @param string $string the Description to parse
+     * @return int the estimate in seconds (0 if no estimate found)
      */
     public static function parseOfferEstimate($string)
     {
@@ -190,7 +190,7 @@ class Update extends AbstractCLI
     }
 
     /**
-     * Import worklogs
+     * Imports worklogs from the Tempo API for the given project
      *
      * @param string $project
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -223,7 +223,6 @@ class Update extends AbstractCLI
         }
         $this->db->commit();
         if ($got > 0) $this->success('Imported {count} logs', ['count' => $got]);
-        #print_r($logs);
     }
 
     /**

@@ -1,16 +1,24 @@
 <?php
 
-
 namespace splitbrain\JiraDash\Renderer;
 
 use splitbrain\JiraDash\Container;
 
+/**
+ * Class AbstractRenderer
+ *
+ * This is what a result renderer looks like
+ */
 abstract class AbstractRenderer
 {
+    /** @var Container */
     protected $container;
+    /** @var string The project key this rendered result is for */
     protected $project;
+    /** @var array The report configuration that was used when creating the result */
     protected $rc;
 
+    /** @var array Nicer column names when displaying */
     protected $columnNames = [
         'epic_title' => 'Epic',
         'epic_estimate' => 'Epic Est.',
@@ -31,6 +39,13 @@ abstract class AbstractRenderer
         'worklog_description' => 'Worklog',
     ];
 
+    /**
+     * AbstractRenderer constructor.
+     *
+     * @param Container $container
+     * @param array $rc
+     * @param string $project
+     */
     public function __construct(Container $container, $rc, $project)
     {
         $this->container = $container;
@@ -38,6 +53,12 @@ abstract class AbstractRenderer
         $this->project = $project;
     }
 
+    /**
+     * Render the given data
+     *
+     * @param array $data The result of the SQL query that should be rendered
+     * @return string the output
+     */
     abstract public function render($data);
 
     /**
@@ -52,6 +73,21 @@ abstract class AbstractRenderer
         return $in;
     }
 
+    /**
+     * Format the given value according to the column name
+     *
+     * Tries to find a formatColumnType() method, then falls back to a formatColumn() method. If both
+     * aren't available, the value is returned as is.
+     *
+     * snake_case is converted to CamelCase when looking up the methods.
+     *
+     * Inheriting classes should apply this function to each cell. Additional escaping may need to be
+     * done.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
     protected function formatValue($name, $value)
     {
         $camel = str_replace('_', '', ucwords($name, '_'));
@@ -70,6 +106,14 @@ abstract class AbstractRenderer
         return $value;
     }
 
+    /**
+     * Formats logged work times
+     *
+     * Converts seconds to days or hours according to RC configuration
+     *
+     * @param int $value
+     * @return string
+     */
     protected function formatLogged($value)
     {
         if (empty($this->rc['hours'])) {
@@ -79,16 +123,34 @@ abstract class AbstractRenderer
         }
     }
 
+    /**
+     * Alias for formatLogged()
+     *
+     * @param int $value
+     * @return string
+     */
     protected function formatEstimate($value)
     {
         return $this->formatLogged($value);
     }
 
+    /**
+     * Alias for formatLogged()
+     *
+     * @param int $value
+     * @return string
+     */
     protected function formatOffer($value)
     {
         return $this->formatLogged($value);
     }
 
+    /**
+     * Reformat date times to only show the date
+     *
+     * @param string $value
+     * @return string
+     */
     protected function formatCreated($value)
     {
         if (!$value) return '';

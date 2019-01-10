@@ -7,12 +7,15 @@ use Slim\Http\Response;
 
 /**
  * Class HomeController
- * @package CosmoCode\PMIDashboard\Controllers
+ *
+ * Handles the home screen actions
  */
 class HomeController extends BaseController
 {
 
     /**
+     * Display the home screen
+     *
      * @param Request $request
      * @param Response $response
      * @return \Psr\Http\Message\ResponseInterface
@@ -23,6 +26,8 @@ class HomeController extends BaseController
     }
 
     /**
+     * Add a new project
+     *
      * @param Request $request
      * @param Response $response
      * @return \Psr\Http\Message\ResponseInterface
@@ -37,7 +42,7 @@ class HomeController extends BaseController
             try {
                 $this->container->db->accessDB($project, true);
             } catch (\Exception $ignored) {
-                // we have no error messaging in pace, yet so we just let the user firgure it out themselves
+                // we have no error messaging in place, yet so we just let the user firgure it out themselves
             }
         }
 

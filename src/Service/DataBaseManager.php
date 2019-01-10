@@ -5,6 +5,11 @@ namespace splitbrain\JiraDash\Service;
 use splitbrain\JiraDash\Container;
 use splitbrain\JiraDash\Utilities\SqlHelper;
 
+/**
+ * Class DataBaseManager
+ *
+ * Gives access to the databases
+ */
 class DataBaseManager
 {
     /** @var Container */
@@ -17,6 +22,7 @@ class DataBaseManager
 
     /**
      * DataBaseManager constructor.
+     *
      * @param Container $c
      */
     public function __construct(Container $c)
@@ -26,8 +32,10 @@ class DataBaseManager
     }
 
     /**
+     * Opens the database for the given project
+     *
      * @param string $project
-     * @param bool $create
+     * @param bool $create should the database be created ifit doesn't exist?
      * @return SqlHelper
      * @throws \Exception
      */
@@ -63,6 +71,11 @@ class DataBaseManager
         return $this->connections[$project];
     }
 
+    /**
+     * Creates a new database and fills it with the schema
+     *
+     * @param SqlHelper $db
+     */
     protected function create(SqlHelper $db)
     {
         $sql = file_get_contents($this->schemafile);

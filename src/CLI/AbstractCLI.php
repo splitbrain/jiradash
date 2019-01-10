@@ -6,6 +6,11 @@ use splitbrain\JiraDash\App;
 use splitbrain\JiraDash\Container;
 use splitbrain\phpcli\PSR3CLI;
 
+/**
+ * Class AbstractCLI
+ *
+ * Base class for our command line scripts providing access to the container
+ */
 abstract class AbstractCLI extends PSR3CLI
 {
     /**

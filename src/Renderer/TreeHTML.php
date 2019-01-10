@@ -4,27 +4,39 @@ namespace splitbrain\JiraDash\Renderer;
 
 use splitbrain\JiraDash\Container;
 
+/**
+ * Class TreeHTML
+ *
+ * Render results as a nested table with summarized headers
+ */
 class TreeHTML extends FlatHTML
 {
-
+    /** @var array categorization to be used */
     protected $categories;
 
+    /** @inheritdoc */
     public function __construct(Container $container, $rc, $project)
     {
         parent::__construct($container, $rc, $project);
 
-        // what do we are our categories?
+        // what are our categories?
         $vals = [];
         foreach (['epics', 'versions', 'sprints', 'issues', 'userlogs', 'worklogs'] as $flag) {
             if (!empty($rc[$flag])) $vals[$flag] = 1;
         }
+        // do not use epics and versions at the same time
         if (isset($vals['epics']) && isset($vals['versions'])) unset($vals['versions']);
-
         array_pop($vals); // last one is the smallest resolution, not a category
         $this->categories = $vals;
     }
 
-
+    /**
+     * Turn the flat array into a tree structure with added meta data and sums,
+     * then render that structure
+     *
+     * @todo split into smaller chunks
+     * @inheritdoc
+     */
     public function render($data)
     {
         if (!$data) return '';
@@ -134,6 +146,11 @@ class TreeHTML extends FlatHTML
     }
 
     /**
+     * Renders the given tree structure
+     *
+     * Called recursively
+     *
+     * @todo split out color handling
      * @param array $tree the (sub) tree to render
      * @param int $cols the columns in the data (including prefix)
      * @param int $level the recursion level
@@ -191,6 +208,14 @@ class TreeHTML extends FlatHTML
         return $doc;
     }
 
+    /**
+     * Render the actual non-category data as table rows
+     *
+     * Uses the parent renderer
+     *
+     * @param $data
+     * @return string
+     */
     protected function renderData($data)
     {
         $cats = count($this->categories);

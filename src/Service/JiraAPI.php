@@ -4,6 +4,11 @@ namespace splitbrain\JiraDash\Service;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class JiraAPI
+ *
+ * Accss to Jira REST API
+ */
 class JiraAPI
 {
     /** @var Client jira api client */
@@ -29,6 +34,10 @@ class JiraAPI
     }
 
     /**
+     * Run a JQL request and return all results
+     *
+     * Handles paging
+     *
      * @param $endpoint
      * @param $jql
      * @return mixed
@@ -40,7 +49,7 @@ class JiraAPI
     }
 
     /**
-     * Run a JQL request and return all results
+     * Run a request and return all results
      *
      * Handles paging
      *

@@ -2,11 +2,17 @@
 
 namespace splitbrain\JiraDash\Renderer;
 
+/**
+ * Class FlatHTML
+ *
+ * Render results as a simple HTML table
+ */
 class FlatHTML extends AbstractRenderer
 {
     // reference to the current row for value rendering
     protected $currentRow;
 
+    /** @inheritdoc */
     public function render($data)
     {
         if (!$data) return '';
@@ -21,7 +27,13 @@ class FlatHTML extends AbstractRenderer
         return $doc;
     }
 
-
+    /**
+     * Renders the header columns
+     *
+     * @param array $headers
+     * @param int $prefix number of empty cells to add in front
+     * @return string
+     */
     protected function renderHeaders($headers, $prefix = 0)
     {
         $doc = '<thead><tr>';
@@ -36,6 +48,13 @@ class FlatHTML extends AbstractRenderer
         return $doc;
     }
 
+    /**
+     * Renders a single row
+     *
+     * @param array $row
+     * @param int $prefix number of empty cells to add in front
+     * @return string
+     */
     protected function renderRow($row, $prefix = 0)
     {
         $this->currentRow = $row;
@@ -52,6 +71,11 @@ class FlatHTML extends AbstractRenderer
         return $doc;
     }
 
+    /**
+     * We escape everything that is not handled by our own format methods
+     *
+     * @inheritdoc
+     */
     protected function formatValue($name, $value)
     {
         if ($name === 'issue_id') return $this->formatIssueId($value);
@@ -60,6 +84,12 @@ class FlatHTML extends AbstractRenderer
         return htmlspecialchars(parent::formatValue($name, $value));
     }
 
+    /**
+     * Links issue IDs to Jira
+     *
+     * @param int $val
+     * @return string safe HTML
+     */
     protected function formatIssueId($val)
     {
         $base = rtrim($this->container->settings['app']['api']['base'], '/');
@@ -68,6 +98,12 @@ class FlatHTML extends AbstractRenderer
         return '<a href="' . $url . '" target="_blank">' . $this->project . '-' . $val . '</a>';
     }
 
+    /**
+     * Compares the esitmate with the logged work in the same row, colors accordingly
+     *
+     * @inheritdoc
+     * @return string safe HTML
+     */
     protected function formatEstimate($value)
     {
         $formatted = parent::formatEstimate($value);
