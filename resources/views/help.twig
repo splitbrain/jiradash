@@ -1,0 +1,33 @@
+{% extends 'layout.twig' %}
+{% import 'form.twig' as form %}
+
+{% block content %}
+    <div class="content">
+
+        <h2>Estimate Handling</h2>
+
+        <p>
+            All estimates come from the estimates set as OriginalEstimate in the Issues. On Import these issue estimates
+            are aggregated into higher level items like Sprints, Epics and Versions.
+        </p>
+
+        <p>
+            Estimates are compared to the work logged on the issues. When the logged work is greater than the estimate,
+            the estimate truns red. Otherwise it's green.
+        </p>
+
+        <h2>Offer Estimates</h2>
+
+        <p>
+            Since issue based estimates may increase during development, they may not be ideal for controlling. More
+            important is the original estimate that was used in the offer to the customer.
+        </p>
+
+        <p>
+            Offer estimates can be set for Sprints, Versions and Epics. For Epics, simply set the OriginalEstimate field
+            in Jira. For Sprints and versions you can put this info in the description in the form
+            <code>Estimate: 5d</code>. You can use the units h (hours), d (days) and m (minutes).
+        </p>
+
+    </div>
+{% endblock %}

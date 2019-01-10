@@ -3,6 +3,8 @@
 namespace splitbrain\JiraDash;
 
 
+use splitbrain\JiraDash\Controllers\HelpController;
+use splitbrain\JiraDash\Controllers\Helpontroller;
 use splitbrain\JiraDash\Controllers\HomeController;
 use splitbrain\JiraDash\Controllers\ProjectController;
 
@@ -68,6 +70,7 @@ class App
     {
         $this->app->get('/', HomeController::class)->setName('home');
         $this->app->post('/', HomeController::class . ':addProject')->setName('home-addProject');
+        $this->app->get('/help', HelpController::class)->setName('help');
         $this->app->any('/p/{project}', ProjectController::class)->setName('project');
     }
 
