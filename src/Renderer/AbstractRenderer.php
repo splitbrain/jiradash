@@ -72,7 +72,7 @@ abstract class AbstractRenderer
 
     protected function formatLogged($value)
     {
-        if(empty($this->rc['hours'])) {
+        if (empty($this->rc['hours'])) {
             return round($value / (60 * 60 * 8), 2) . 'd';
         } else {
             return round($value / (60 * 60), 2) . 'h';
@@ -91,7 +91,7 @@ abstract class AbstractRenderer
 
     protected function formatCreated($value)
     {
-        if(!$value) return '';
+        if (!$value) return '';
         return date('Y-m-d', strtotime($value));
     }
 }

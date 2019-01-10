@@ -89,7 +89,7 @@ class Update extends AbstractCLI
 
             // handle versions
             $version = null;
-            if(isset($issue['fields']['fixVersions'][0])) {
+            if (isset($issue['fields']['fixVersions'][0])) {
                 $version = $issue['fields']['fixVersions'][0];
                 $insert = [
                     'id' => $version['id'],
@@ -183,7 +183,7 @@ class Update extends AbstractCLI
                 $val = $val * 60;
             }
 
-            return (int) $val;
+            return (int)$val;
         }
 
         return 0;

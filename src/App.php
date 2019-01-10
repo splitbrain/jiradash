@@ -67,7 +67,7 @@ class App
     protected function initRoutes()
     {
         $this->app->get('/', HomeController::class)->setName('home');
-        $this->app->post('/', HomeController::class.':addProject')->setName('home-addProject');
+        $this->app->post('/', HomeController::class . ':addProject')->setName('home-addProject');
         $this->app->any('/p/{project}', ProjectController::class)->setName('project');
     }
 

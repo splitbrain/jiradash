@@ -12,7 +12,7 @@ abstract class AbstractCLI extends PSR3CLI
      * @var Container $container Only initialized during the main() execution!
      */
     protected $container;
-    
+
     /** @inheritdoc */
     protected function execute()
     {
