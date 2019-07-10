@@ -125,7 +125,6 @@ class ReportBuilder
         $this->columns['i.id'] = 'issue_id';
         $this->columns['i.type'] = 'issue_type';
         $this->columns['i.title'] = 'issue_title';
-        $this->columns['s.title'] = 'sprint_title';
         $this->columns['e.title'] = 'epic_title';
         $this->columns['i.estimate'] = 'issue_estimate';
 

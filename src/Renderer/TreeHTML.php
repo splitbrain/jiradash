@@ -61,6 +61,7 @@ class TreeHTML extends FlatHTML
 
                 unset($row['epic_title']);
                 unset($row['epic_estimate']);
+                unset($row['epic_offer']);
             } elseif (isset($this->categories['versions'])) {
                 // we handle versions like epics, but we only support either one!
                 $epic = $row['version_title'];
@@ -74,6 +75,7 @@ class TreeHTML extends FlatHTML
 
                 unset($row['version_title']);
                 unset($row['version_estimate']);
+                unset($row['version_offer']);
             } else {
                 $epic = '–';
             }
@@ -89,6 +91,7 @@ class TreeHTML extends FlatHTML
                 }
 
                 unset($row['sprint_estimate']);
+                unset($row['sprint_offer']);
                 unset($row['sprint_title']);
             } else {
                 $sprint = '–';
