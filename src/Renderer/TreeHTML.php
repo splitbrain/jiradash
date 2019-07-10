@@ -166,7 +166,7 @@ class TreeHTML extends FlatHTML
         $doc = '';
         if (count($tree['sub']) > 1 || !isset($tree['sub']['–'])) {
             $span = $cols - $level - 1;
-
+            
             foreach ($tree['sub'] as $name => $item) {
                 $doc .= '<tr>';
                 $doc .= implode('', array_fill(0, $level, '<th>&nbsp;</th>'));
@@ -224,6 +224,8 @@ class TreeHTML extends FlatHTML
         $cats = count($this->categories);
         $doc = '';
         foreach ($data as $row) {
+            if(! array_filter(array_values($row)) ) continue; // skip completely empty rows
+
             $doc .= parent::renderRow($row, $cats);
         }
         return $doc;
