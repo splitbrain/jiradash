@@ -199,7 +199,7 @@ class Update extends AbstractCLI
     {
         $this->info('Importing worklogs...');
         $got = 0;
-        $logs = $this->tempoAPI->query("/2/worklogs/project/$project", []);
+        $logs = $this->tempoAPI->query("/core/3/worklogs/project/$project", []);
         $this->db->begin();
         foreach ($logs['results'] as $log) {
             $insert = [
