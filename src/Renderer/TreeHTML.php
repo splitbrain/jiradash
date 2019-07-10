@@ -188,7 +188,7 @@ class TreeHTML extends FlatHTML
                         $color = 'danger';
                     }
                     $doc .= '<small class="is-pulled-right has-text-' . $color . '" style="padding: 0.1em 0.2em">';
-                    $doc .= 'Offer: ' . $this->formatValue('estimate', $item['estimate']);
+                    $doc .= 'Offer: ' . $this->formatValue('offer', $item['offer']);
                     $doc .= '</small> ';
                 }
 
