@@ -207,7 +207,7 @@ class Update extends AbstractCLI
                 'issue_id' => preg_replace('/\D+/', '', $log['issue']['key']),
                 'created' => $this->dateClean($log['startDate']),
                 'logged' => $log['timeSpentSeconds'],
-                'user' => $log['author']['displayName'],
+                'user' => $log['author']['displayName'] ?? $log['author']['accountId'],
                 'description' => $log['description'],
             ];
             try {
