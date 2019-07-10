@@ -106,9 +106,9 @@ class Update extends AbstractCLI
                 $insert = [
                     'id' => $sprint['id'],
                     'title' => $sprint['name'],
-                    'description' => $sprint['goal'],
-                    'created' => $this->dateClean($sprint['startDate']),
-                    'offer' => self::parseOfferEstimate($sprint['goal']),
+                    'description' => $sprint['goal'] ?? '',
+                    'created' => $this->dateClean($sprint['startDate'] ?? ''),
+                    'offer' => self::parseOfferEstimate($sprint['goal'] ?? ''),
                 ];
                 $this->db->insertRecord('sprint', $insert);
             }
