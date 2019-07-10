@@ -259,7 +259,9 @@ class Update extends AbstractCLI
                   GROUP BY sprint_id
                 )
                 UPDATE sprint
-                    SET estimate = (SELECT estimate FROM a WHERE a.sprint_id = sprint.id)';
+                    SET estimate = (SELECT estimate FROM a WHERE a.sprint_id = sprint.id)
+                    WHERE sprint.id IN (SELECT sprint_id FROM a)
+                    ';
         $this->db->exec($sql);
 
         $sql = 'WITH a AS(
@@ -268,7 +270,9 @@ class Update extends AbstractCLI
                   GROUP BY epic_id
                 )
                 UPDATE epic
-                    SET estimate = (SELECT estimate FROM a WHERE a.epic_id = epic.id)';
+                    SET estimate = (SELECT IFNULL(estimate,0) FROM a WHERE a.epic_id = epic.id)
+                    WHERE epic.id IN (SELECT epic_id FROM a)
+                    ';
         $this->db->exec($sql);
 
         $sql = 'WITH a AS(
@@ -277,7 +281,9 @@ class Update extends AbstractCLI
                   GROUP BY version_id
                 )
                 UPDATE version
-                    SET estimate = (SELECT estimate FROM a WHERE a.version_id = version.id)';
+                    SET estimate = (SELECT estimate FROM a WHERE a.version_id = version.id)
+                    WHERE version.id IN (SELECT version_id FROM a)
+                    ';
         $this->db->exec($sql);
     }
 
