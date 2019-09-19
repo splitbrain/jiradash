@@ -117,9 +117,11 @@ abstract class AbstractRenderer
     protected function formatLogged($value)
     {
         if (empty($this->rc['hours'])) {
-            return round($value / (60 * 60 * 8), 2) . 'd';
+            $unit = empty($this->rc['skipunits']) ? 'd' : '';
+            return round($value / (60 * 60 * 8), 2) . $unit;
         } else {
-            return round($value / (60 * 60), 2) . 'h';
+            $unit = empty($this->rc['skipunits']) ? 'h' : '';
+            return round($value / (60 * 60), 2) . $unit;
         }
     }
 

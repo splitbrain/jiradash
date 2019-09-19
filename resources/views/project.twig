@@ -23,6 +23,7 @@
 
                         {{ form.dropdown('Renderer', 'rc[renderer]', {'FlatHTML':'flat', 'TreeHTML':'nested'}, rc.renderer) }}
                         {{ form.checkbox('Show Hours', 'rc[hours]', '1', rc.hours) }}
+                        {{ form.checkbox('Skip Units', 'rc[skipunits]', '1', rc.skipunits) }}
                     </div>
                 </div>
                 <button type="submit" class="button is-primary">Submit</button>
