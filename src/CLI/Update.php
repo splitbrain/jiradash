@@ -135,7 +135,7 @@ class Update extends AbstractCLI
                     'estimate' => (int)$issue['fields']['aggregatetimeoriginalestimate'],
                     'logged' => (int)$issue['fields']['aggregatetimespent'],
                     'type' => $issue['fields']['issuetype']['name'],
-                    'user' => $issue['fields']['assignee']['displayName'],
+                    'user' => isset($issue['fields']['assignee']['displayName']) ? $issue['fields']['assignee']['displayName'] : 'none',
                     'status' => $issue['fields']['status']['name'],
                     'created' => $this->dateClean($issue['fields']['created']),
                     'updated' => $this->dateClean($issue['fields']['updated']),
